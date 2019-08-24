@@ -24,7 +24,7 @@ class UserController extends Controller
     public function login(Request $request){
         $request->validate([
             'email' => 'required|string|email',
-            'password' => 'required|string',
+            'password' => 'required|string|min:6|max:50',
             'remember_me' => 'nullable|boolean'
         ]);
 
@@ -32,27 +32,29 @@ class UserController extends Controller
         $credentials['is_active'] = 1;
         $credentials['deleted_at'] = null;
 
-        if(!Auth::attempt($credentials))
-            return response()->json([
-                'message' => 'Unauthorized'
-            ], 204);
+        if(Auth::attempt($credentials)){
+            
+            $user = Auth::user();
+            $user->load([
+                'bisnis',
+                'outlet',
+                'role.aplikasi' => function($query){
+                    $query->where('aplikasi_id','1');     //// ini belum selesai
+                    $query->with('otorisasi.child');
+                }]
+            );
 
-        $user = Auth::user();
-        $user->load([
-            'bisnis',
-            'outlet',
-            'role.aplikasi' => function($query){
-                $query->where('aplikasi_id','1');     //// ini belum selesai
-                $query->with('otorisasi.child');
-            }]
-        );
-
-        return response()->json([ 
+            return response()->json([ 
                 'bisnis' => $user->bisnis ? new BisnisResource($user->bisnis): [], 
                 'user' => new UserLoginResource($user), 
                 'outlet' => $user->bisnis->outlet ? OutletResource::collection($user->bisnis->outlet) : [], 
                 'token' => $user->api_token
             ], $this->successStatus);
+        }else{
+            return response()->json([
+                'message' => 'Unauthorized'
+            ], 401);
+        }
     }
 
     public function signup(Request $request)

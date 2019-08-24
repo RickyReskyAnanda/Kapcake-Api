@@ -13,7 +13,7 @@ class KategoriBarangController extends Controller
     public function index(Request $request)
     {
         $this->authorize('view', KategoriBarang::class);
-        if(request()->has('paginate') && $request->paginate == 'true')
+        if(request()->has('paginate') && $request->paginate == 'true'){
             $data = $request->user()->bisnis
                     ->kategoriBarang()
                     ->where(function($q){
@@ -21,13 +21,14 @@ class KategoriBarangController extends Controller
                         $q->where('outlet_id', auth()->user()->outlet_terpilih_id);
                         $q->where('nama_kategori_barang','like', '%'.request()->pencarian.'%');
                     })->paginate();
+            return KategoriBarangResource::collection($data);
+        }
         else
-            $data = $request->user()->bisnis
+            return $data = $request->user()->bisnis
                     ->kategoriBarang()
                     ->where('outlet_id', auth()->user()->outlet_terpilih_id)    
                     ->get();
                     
-        return KategoriBarangResource::collection($data);
     }
 
     public function store(Request $request)

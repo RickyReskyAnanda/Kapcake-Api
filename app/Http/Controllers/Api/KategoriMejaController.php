@@ -18,19 +18,25 @@ class KategoriMejaController extends Controller
         if(isset($request->paginate) && $request->paginate == 'true')
             $data =  $request->user()->bisnis
                     ->kategoriMeja()
-                    ->where('outlet_id', auth()->user()->outlet_terpilih_id)
-                    // ->where(function($q){
-                    //     if(isset(request()->pencarian))
-                    //         $q->where('nama_kategori_menu', request()->pencarian);
-                    // })
+                    ->where(function($q) use ($request){
+                        if($request->has('outlet_id') && $request->outlet_id != 0)
+                            $q->where('outlet_id', $request->outlet_id);
+                        if($request->has('pencarian'))
+                            $q->where('nama_kategori_menu', request()->pencarian);
+                    })
                     ->paginate();
         else
-            $data = $request->user()->bisnis
+            $data = $request->user()
+                    ->bisnis
                     ->kategoriMeja()
-                    // ->where(function($q){
-                    //     if(isset(request()->pencarian))
-                    //         $q->where('nama_kategori_menu', request()->pencarian);
-                    // })
+                    ->where(function($q) use ($request){
+                        if($request->has('outlet_id') && $request->outlet_id != 0)
+                            $q->where('outlet_id', $request->outlet_id);
+
+                        $q->where('is_aktif', $request->has('aktif') ? $request->aktif : 2);
+                        if($request->has('pencarian'))
+                            $q->where('nama_kategori_meja', $request->has('pencarian'));
+                    })
                     ->get();
         return KategoriMejaIndexResource::collection($data);
     }
@@ -42,7 +48,7 @@ class KategoriMejaController extends Controller
         $data = $request->validate($this->validation());
         DB::beginTransaction();
         try {   
-            $pajak = $request->user()->bisnis
+            $request->user()->bisnis
                             ->kategoriMeja()
                             ->create($data);
             DB::commit();

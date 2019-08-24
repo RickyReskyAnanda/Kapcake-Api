@@ -19,6 +19,15 @@ Route::post('signup', 'Api\UserController@signup');
 Route::group(['middleware' => 'auth:api'], function(){
 	Route::get('dashboard','Api\DashboardController@index');
 
+	Route::get('laporan/ringkasan-penjualan','Api\LaporanController@ringkasanPenjualan');
+	Route::get('laporan/penjualan','Api\LaporanController@penjualan');
+	Route::get('laporan/kategori-penjualan','Api\LaporanController@kategoriPenjualan');
+	Route::get('laporan/transaksi','Api\LaporanController@transaksi');
+	Route::get('laporan/bahan-dapur','Api\LaporanController@bahanDapur');
+	Route::get('laporan/diskon','Api\LaporanController@diskon');
+	Route::get('laporan/pajak','Api\LaporanController@pajak');
+	Route::get('laporan/biaya-tambahan','Api\LaporanController@biayaTambahan');
+
 	Route::get('menu','Api\MenuController@index');
 	Route::post('menu','Api\MenuController@store');
 	Route::get('menu/{menu}','Api\MenuController@show');
@@ -119,7 +128,6 @@ Route::group(['middleware' => 'auth:api'], function(){
 
 	Route::get('feedback','Api\FeedBackController@index');
 	Route::get('feedback/{feedback}','Api\FeedBackController@show');
-
 
 	Route::get('staf','Api\StafController@index');
 	Route::post('staf','Api\StafController@store');

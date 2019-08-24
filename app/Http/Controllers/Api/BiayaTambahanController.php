@@ -22,17 +22,21 @@ class BiayaTambahanController extends Controller
         if(isset($request->paginate) && $request->paginate == 'true')
             $data = $request->user()->bisnis
                     ->biayaTambahan()
-                    ->where(function($q){
-                        $q->where('outlet_id', auth()->user()->outlet_terpilih_id);
-                        $q->where('nama_biaya_tambahan', 'like', '%'.request()->pencarian.'%');
+                    ->where(function($q) use ($request){
+                        if($request->has('outlet_id'))
+                            $q->where('outlet_id', $request->outlet_id);
+                        if($request->has('pencarian'))
+                            $q->where('nama_biaya_tambahan', 'like', '%'.$request->pencarian.'%');
                     })->paginate();
         else
             $data = $request->user()->bisnis
                     ->biayaTambahan()
-                    ->where(function($q){
-                        $q->where('outlet_id', auth()->user()->outlet_terpilih_id);
+                    ->where(function($q) use ($request){
+                        if($request->has('outlet_id'))
+                            $q->where('outlet_id', $request->outlet_id);
                     })
                     ->get();
+
         return BiayaTambahanResource::collection($data);
     }
 
@@ -51,7 +55,8 @@ class BiayaTambahanController extends Controller
         DB::beginTransaction();
         try {   
             foreach ($data['outlet'] as $d) {
-                $biayaTambahan = $request->user()->bisnis
+                $biayaTambahan = $request->user()
+                            ->bisnis
                             ->biayaTambahan()
                             ->create([
                                 'outlet_id' => $d['outlet_id'],

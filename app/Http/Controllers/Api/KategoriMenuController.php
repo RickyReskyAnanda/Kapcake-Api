@@ -14,15 +14,20 @@ class KategoriMenuController extends Controller
         $this->authorize('view', KategoriMenu::class);
 
         if(isset($request->paginate) && $request->paginate == 'true')
-            $data =  $request->user()->bisnis
+            $data =  $request->user()
+                    ->bisnis
                     ->kategoriMenu()
-                    ->where(function($q){
+                    ->where(function($q) use ($request){
                         $q->where('is_paten', 0);
-                        $q->where('outlet_id', auth()->user()->outlet_terpilih_id);
-                        $q->where('nama_kategori_menu','like', '%'.request()->pencarian.'%');
-                    })->paginate();
+                        $q->where('outlet_id', $request->has('outlet_id') ? $request->outlet_id : '0');
+                        if($request->has('pencarian'))
+                            $q->where('nama_kategori_menu','like', '%'.$request->pencarian.'%');
+                    })
+                    ->orderBy('nama_kategori_menu','asc')
+                    ->paginate(10);
         else
-            $data =  $request->user()->bisnis
+            $data =  $request->user()
+                    ->bisnis
                     ->kategoriMenu()
                     // ->where(function($q){
                     //     if(isset(request()->pencarian))

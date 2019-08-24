@@ -22,20 +22,20 @@ class PajakController extends Controller
         if(isset($request->paginate) && $request->paginate == 'true')
             $data = $request->user()->bisnis
                     ->pajak()
-                    ->where('outlet_id', auth()->user()->outlet_terpilih_id)
-                    ->where(function($q){
-                        if(isset(request()->pencarian))
-                            $q->where('nama_pajak', 'like', '%'.request()->pencarian.'%');
-                            $q->orWhere('jumlah', 'like', '%'.request()->pencarian.'%');
+                    ->where('outlet_id', $request->has('outlet_id') ? $request->outlet_id : '')
+                    ->where(function($q) use ($request){
+                        $q->where('nama_pajak', 'like', '%'.$request->pencarian.'%');
+                        $q->orWhere('jumlah', 'like', '%'.$request->pencarian.'%');
                     })
                     ->paginate();
         else
             $data = $request->user()->bisnis
                     ->pajak()
-                    // ->where(function($q){
-                    //     if(isset(request()->pencarian))
-                    //         $q->where('nama_kategori_menu', request()->pencarian);
-                    // })
+                    ->where(function($q) use ($request){
+                        if($request->has('pencarian'))
+                            $q->where('nama_kategori_menu', $request->pencarian);
+                        $q->where('nama_kategori_menu', $request->has('outlet_id') ? $request->outlet_id : '0' );
+                    })
                     ->get();
 
         return PajakResource::collection($data);

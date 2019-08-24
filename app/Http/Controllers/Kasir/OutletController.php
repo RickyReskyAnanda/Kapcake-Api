@@ -26,6 +26,7 @@ class OutletController extends Controller
                     'jenisPemesanan',
                     'pemesanan.item',
                     'penjualan.item'
+                    // 'printer'
                 )
                 ->where('id_outlet', $request->outlet_id)
                 ->first();

@@ -20,4 +20,8 @@ class Meja extends Model
         });
     }
 
+    public function kategoriMeja(){
+        return $this->belongsTo(KategoriMeja::class, 'kategori_meja_id');
+    }
+
 }

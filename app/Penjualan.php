@@ -24,4 +24,24 @@ class Penjualan extends Model
     public function item(){
     	return $this->hasMany(PenjualanItem::class,'penjualan_id');
     }
+
+    public function kasir(){
+        return $this->belongsTo(User::class,'id', 'user_id');
+    }
+
+    public function kasirTransfer(){
+        return $this->belongsTo(User::class,'id','user_transfer_id');
+    }
+
+    public function diskon(){
+        return $this->belongsTo(Diskon::class, 'diskon_id');
+    }
+
+    public function pajak(){
+        return $this->belongsTo(Pajak::class, 'pajak_id');
+    }
+
+    public function biayaTambahan(){
+        return $this->belongsTo(BiayaTambahan::class, 'biaya_tambahan_id');
+    }
 }

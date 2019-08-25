@@ -22,7 +22,7 @@ class KategoriMejaController extends Controller
                         if($request->has('outlet_id') && $request->outlet_id != 0)
                             $q->where('outlet_id', $request->outlet_id);
                         if($request->has('pencarian'))
-                            $q->where('nama_kategori_menu', request()->pencarian);
+                            $q->where('nama_kategori_meja', request()->pencarian);
                     })
                     ->paginate();
         else

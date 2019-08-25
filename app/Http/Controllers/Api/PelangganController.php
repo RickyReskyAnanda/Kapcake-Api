@@ -9,23 +9,23 @@ class PelangganController extends Controller
 {
     public function index(Request $request)
     {
-        $this->authorize('view', Pelanggan::class);
+        // $this->authorize('view', Pelanggan::class);
 
         if(isset($request->paginate) && $request->paginate == 'true')
-            return $request->user()->bisnis
+            return $request->user()
+                    ->bisnis
                     ->pelanggan()
-                    // ->where(function($q){
-                    //     if(isset(request()->pencarian))
-                    //         $q->where('nama_kategori_menu', request()->pencarian);
-                    // })
+                    ->where(function($q) use ($request){
+                            $q->where('nama_pelanggan', '%'.$request->pencarian.'%');
+                    })
                     ->paginate();
         else
-            return $request->user()->bisnis
+            return $request->user()
+                    ->bisnis
                     ->pelanggan()
-                    // ->where(function($q){
-                    //     if(isset(request()->pencarian))
-                    //         $q->where('nama_kategori_menu', request()->pencarian);
-                    // })
+                    ->where(function($q) use ($request){
+                            $q->where('nama_pelanggan', '%'.$request->pencarian.'%');
+                    })
                     ->get();
     }
 

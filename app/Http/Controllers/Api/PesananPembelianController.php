@@ -21,9 +21,14 @@ class PesananPembelianController extends Controller
         if(isset($request->paginate) && $request->paginate == 'true')
             $data = $request->user()->bisnis
                     ->pesananPembelian()
-                    ->where('outlet_id', auth()->user()->outlet_terpilih_id)
-                    ->where('tipe_item', auth()->user()->jenis_item_terpilih)
-                    ->whereBetween('created_at', [$request->tanggal_awal.' 00:00:00', $request->tanggal_akhir.' 23:59:59'])
+                    ->where(function($q) use ($request){
+                        if($request->has('outlet_id') && $request->outlet_id !== '0' )
+                            $q->where('outlet_id', $request->outlet_id);
+                        if($request->has('jenis_item'))
+                            $q->where('tipe_item', $request->jenis_item);
+                        if($request->has('tanggal_awal') && $request->has('tanggal_akhir'))
+                            $q->whereBetween('created_at', [$request->tanggal_awal.' 00:00:00', $request->tanggal_akhir.' 23:59:59']);
+                    })
                     ->paginate();
         else
             $data = $request->user()->bisnis

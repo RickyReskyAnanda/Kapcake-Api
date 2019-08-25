@@ -18,18 +18,30 @@ class AkunBankController extends Controller
             $data = $request->user()->bisnis
                     ->akunBank()
                     ->with('bank', 'outlet')
-                    // ->where(function($q){
-                    //     if(isset(request()->pencarian))
-                    //         $q->where('nama_kategori_menu', request()->pencarian);
-                    // })
+                    ->where(function($q) use ($request){
+                        if($request->has('outlet_id') && $request->outlet_id != 0)
+                            $q->whereHas('outlet', function($q) use ($request){
+                                $q->where('outlet_id',$request->outlet_id);
+                            });
+
+                        $q->where('nomor_rekening', 'like', '%'.$request->pencarian.'%');
+                        $q->where('pemilik_akun', 'like', '%'.$request->pencarian.'%');
+                        $q->where('keterangan', 'like', '%'.$request->pencarian.'%');
+                    })
                     ->paginate();
         else
             $data = $request->user()->bisnis
                     ->akunBank()
-                    // ->where(function($q){
-                    //     if(isset(request()->pencarian))
-                    //         $q->where('nama_kategori_menu', request()->pencarian);
-                    // })
+                    ->where(function($q) use ($request){
+                        if($request->has('outlet_id') && $request->outlet_id != 0)
+                            $q->whereHas('outlet', function($q) use ($request){
+                                $q->where('outlet_id',$request->outlet_id);
+                            });
+
+                        $q->where('nomor_rekening', 'like', '%'.$request->pencarian.'%');
+                        $q->where('pemilik_akun', 'like', '%'.$request->pencarian.'%');
+                        $q->where('keterangan', 'like', '%'.$request->pencarian.'%');
+                    })
                     ->get();
         return AkunBankIndexResource::collection($data);
     }

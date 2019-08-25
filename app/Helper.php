@@ -9,7 +9,8 @@
 	//// numbering format
 
 	function zeroFill($number){
-		return sprintf("%09d", $number);
+		// return sprintf("%09d", $number);
+		return  $number;
 	}
 
 ?>

@@ -15,11 +15,10 @@ class InventoriBarang extends JsonResource
     public function toArray($request)
     {
             return [
-                    'id' => $this->id_inventori_barang,
-                    'nama' => $this->barang->nama_barang ?? '',
-                    'kategori' => $this->kategoriBarang->nama_kategori_barang ?? '',
+                    'nama' => $this->nama_barang ?? '',
+                    'kategori' => $this->nama_kategori_barang ?? '',
                     'stok_awal' => $this->stok_awal,
-                    'penjualan' => $this->penjualan,
+                    'pemakaian' => $this->pemakaian,
                     'transfer' => $this->transfer,
                     'penyesuaian_stok' => $this->penyesuaian_stok,
                     'stok_akhir' => $this->stok_akhir

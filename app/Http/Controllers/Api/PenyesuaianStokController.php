@@ -19,19 +19,19 @@ class PenyesuaianStokController extends Controller
         if(isset($request->paginate) && $request->paginate == 'true')
             $data = $request->user()->bisnis
                     ->penyesuaianStok()
-                    // ->where(function($q){
-                    //     if(isset(request()->pencarian))
-                    //         $q->where('nama_kategori_menu', request()->pencarian);
-                    // })
-                    ->paginate();
-        else
-            $data = $request->user()->bisnis
-                    ->penyesuaianStok()
-                    // ->where(function($q){
-                    //     if(isset(request()->pencarian))
-                    //         $q->where('nama_kategori_menu', request()->pencarian);
-                    // })
-                    ->get();
+                     ->where(function($q) use ($request){
+                        if($request->has('outlet_id') && $request->outlet_id !== '0' )
+                            $q->where('outlet_id', $request->outlet_id);
+                        if($request->has('jenis_item'))
+                            $q->where('tipe_item', $request->jenis_item);
+                        if($request->has('status_pesanan_pembelian') && $request->status_pesanan_pembelian != '')
+                            $q->where('status', $request->status_pesanan_pembelian);
+                        if($request->has('tanggal_awal') && $request->has('tanggal_akhir'))
+                            $q->whereBetween('created_at', [$request->tanggal_awal.' 00:00:00', $request->tanggal_akhir.' 23:59:59']);
+                        if($request->has('pencarian') && $request->pencarian != '')
+                            $q->where('id_pesanan_pembelian', 'like','%'.$request->pencarian.'%');
+                    })
+                    ->paginate(10);
         return PenyesuaianStokIndexResource::collection($data);
     }
 

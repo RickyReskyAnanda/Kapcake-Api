@@ -7,6 +7,7 @@ use App\Transfer;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\TransferIndex as TransferIndexResource;
+use App\Http\Resources\TransferShow as TransferShowResource;
 
 class TransferController extends Controller
 {
@@ -14,23 +15,24 @@ class TransferController extends Controller
     {
         $this->authorize('view', Transfer::class);
 
-        if(isset($request->paginate) && $request->paginate == 'true')
+        if(isset($request->paginate) && $request->paginate == 'true'){
             $data = $request->user()->bisnis
                     ->transfer()
                     ->latest()
-                    ->where(function($q){
-                        $q->where('outlet_asal_id', auth()->user()->outlet_terpilih_id );
-                        $q->orWhere('outlet_tujuan_id', auth()->user()->outlet_terpilih_id );
+                     ->where(function($q) use ($request){
+                        if($request->has('outlet_id') && $request->outlet_id !== '0' )
+                            $q->where(function($q) use ($request){
+                                $q->where('outlet_asal_id', $request->outlet_id);
+                                $q->orWhere('outlet_tujuan_id', $request->outlet_id);
+                            });
+                        if($request->has('jenis_item'))
+                            $q->where('tipe_item', $request->jenis_item);
+                        if($request->has('tanggal_awal') && $request->has('tanggal_akhir'))
+                            $q->whereBetween('created_at', [$request->tanggal_awal.' 00:00:00', $request->tanggal_akhir.' 23:59:59']);
                     })
-                    ->whereBetween('created_at', [$request->tanggal_awal, $request->tanggal_akhir])
-                    ->where('tipe_item', auth()->user()->jenis_item_terpilih)
                     ->paginate();
-        else
-            $data = $request->user()->bisnis
-                    ->transfer()
-                    ->get();
-
         return TransferIndexResource::collection($data);
+        }
     }
 
     public function store(Request $request)
@@ -43,7 +45,6 @@ class TransferController extends Controller
             $transfer = $request->user()->bisnis
                             ->transfer()
                             ->create($data['data']);
-            
             foreach ($data['entry'] as $d) {
                 $transfer
                     ->entry()
@@ -60,14 +61,14 @@ class TransferController extends Controller
     public function show(Transfer $transfer)
     {
         $this->authorize('show', $transfer);
-
-        return $transfer->load('entry');
+        $transfer->load('entry');
+        return new TransferShowResource($transfer);
     }
 
     public function validation(){
         return [
             'data' => 'required',
-            'entry' => 'required',
+            'entry' => 'required'
         ];
     }
 }

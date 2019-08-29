@@ -15,8 +15,8 @@ class ItemBarang extends JsonResource
     public function toArray($request)
     {
         return [
-                'id' => (int)$this->id_bahan_dapur,
-                'nama' => $this->nama_bahan_dapur,
+                'id' => (int)$this->id_barang,
+                'nama' => $this->nama_barang,
                 'stok' => $this->stok,
         ];
     }

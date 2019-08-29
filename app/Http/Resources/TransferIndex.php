@@ -15,13 +15,13 @@ class TransferIndex extends JsonResource
     public function toArray($request)
     {
         return [
-                'id' => $this->id_transfer,
-                'tanggal' => dateFormat($this->created_at),
-                'outlet_asal' => $this->outletAsal->nama_outlet ?? '',
-                'outlet_tujuan' => $this->outletTujuan->nama_outlet ?? '',
-                'catatan' => ucfirst($this->catatan),
-                'total_item' => $this->entry->count(). ' Item',
-                'jumlah_transfer' => $this->jumlah_transfer,
+            'id' => $this->id_transfer,
+            'tanggal' => dateFormat($this->created_at),
+            'outlet_asal' => $this->outletAsal->nama_outlet ?? '',
+            'outlet_tujuan' => $this->outletTujuan->nama_outlet ?? '',
+            'catatan' => ucfirst($this->catatan),
+            'total_item' => $this->entry->count(). ' Item',
+            'jumlah_transfer' => $this->jumlah_transfer,
         ];
     }
 }

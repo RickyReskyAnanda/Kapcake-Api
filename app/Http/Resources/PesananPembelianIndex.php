@@ -16,9 +16,9 @@ class PesananPembelianIndex extends JsonResource
     {
             return [
                     'id' => $this->id_pesanan_pembelian,
-                    'no_order' => $this->id_pesanan_pembelian,
+                    'no_order' => zeroFill($this->id_pesanan_pembelian),
                     'tanggal' => date('y-m-d h:i:s',strtotime($this->created_at)),
-                    'supplier' => $this->supplier->nama ?? '',
+                    'supplier' => $this->supplier->nama ?? 'Tidak Ada Supplier',
                     'total' => 'Rp. '. number_format($this->total),
                     'status' => ucfirst($this->status),
             ];

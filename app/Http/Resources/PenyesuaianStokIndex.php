@@ -16,6 +16,7 @@ class PenyesuaianStokIndex extends JsonResource
     {
             return [
                     'id' => $this->id_penyesuaian_stok,
+                    'outlet' => $this->outlet->nama_outlet ?? '-',
                     'tanggal' => dateFormat($this->created_at),
                     'catatan' => ucfirst($this->catatan),
                     'total_item' => $this->entry->count(). ' Item',

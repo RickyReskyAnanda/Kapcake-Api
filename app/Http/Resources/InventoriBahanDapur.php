@@ -15,12 +15,11 @@ class InventoriBahanDapur extends JsonResource
     public function toArray($request)
     {
             return [
-                    'id' => $this->id_inventori_bahan_dapur,
-                    'nama' => $this->bahanDapur->nama_bahan_dapur ?? '',
-                    'kategori' => $this->kategoriBahanDapur->nama_kategori_bahan_dapur ?? '',
+                    'nama' => $this->nama_bahan_dapur ?? '',
+                    'kategori' => $this->nama_kategori_bahan_dapur ?? '',
                     'variasi' => '',
                     'stok_awal' => $this->stok_awal,
-                    'penjualan' => $this->penjualan,
+                    'pemakaian' => $this->pemakaian,
                     'transfer' => $this->transfer,
                     'penyesuaian_stok' => $this->penyesuaian_stok,
                     'stok_akhir' => $this->stok_akhir

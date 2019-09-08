@@ -44,9 +44,15 @@ class Menu extends Model
     }
 
     public function gambar(){
-        return $this->hasMany(GambarMenu::class,'menu_id');
+        return $this->hasMany(GambarMenu::class, 'menu_id');
     }
 
+    public function oriGambar(){
+        return $this->hasOne(GambarMenu::class, 'menu_id')->where('is_thumbnail',0);
+    }
+    public function thumbGambar(){
+        return $this->hasOne(GambarMenu::class, 'menu_id')->where('is_thumbnail',1);
+    }
     public function totalVariasi(){
         return $this->variasi()->count();
     }

@@ -6,7 +6,8 @@ use DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\TipePenjualan;
-use App\Http\Resources\TipePenjualan as TipePenjualanResource;
+use App\Http\Resources\TipePenjualanIndex as TipePenjualanIndexResource;
+use App\Http\Resources\TipePenjualanShow as TipePenjualanShowResource;
 
 class TipePenjualanController extends Controller
 {
@@ -22,20 +23,21 @@ class TipePenjualanController extends Controller
         if(isset($request->paginate) && $request->paginate == 'true')
             $data = $request->user()->bisnis
                     ->tipePenjualan()
-                    ->where(function($q){
-                        $q->where('outlet_id', auth()->user()->outlet_terpilih_id);
-                        if(isset(request()->pencarian))
-                            $q->where('nama_tipe_penjualan', 'like', '%'.request()->pencarian.'%');
-                    })->paginate();
+                    ->where(function($q) use ($request){
+                        $q->where('outlet_id', $request->has('outlet_id') ? $request->outlet_id : 0);
+                        if($request->has('pencarian'))
+                            $q->where('nama_tipe_penjualan', 'like', '%'.$request->pencarian.'%');
+                    })
+                    ->latest()
+                    ->paginate();
         else
             $data = $request->user()->bisnis
                     ->tipePenjualan()
-                    ->where(function($q){
-                    //     if(isset(request()->pencarian))
-                            $q->where('outlet_id', auth()->user()->outlet_terpilih_id);
-                    })->get();
+                    ->where('outlet_id', $request->has('outlet_id') ? $request->outlet_id : 0)
+                    ->orderBy('nama_tipe_penjualan','asc')
+                    ->get();
 
-        return TipePenjualanResource::collection($data);
+        return TipePenjualanIndexResource::collection($data);
     }
 
     public function store(Request $request)
@@ -45,20 +47,19 @@ class TipePenjualanController extends Controller
         $data = $request->validate($this->validation());
         DB::beginTransaction();
         try {   
-            foreach ($data['outlet'] as $o) {
                 $tipePenjualan = $request->user()->bisnis
                                 ->tipePenjualan()
                                 ->create([
-                                    'outlet_id' => $o['outlet_id'],
                                     'nama_tipe_penjualan' => $data['nama_tipe_penjualan'],
+                                    'is_aktif' => $data['is_aktif'],
+                                    'outlet_id' => $data['outlet_id'],
                                 ]);
                 
                 foreach ($data['biaya_tambahan'] as $d) {
                     $tipePenjualan
                         ->biayaTambahan()
-                        ->create($d + $o);
+                        ->create($d);
                 }
-            }
 
             DB::commit();
             return response('success',200);
@@ -78,7 +79,7 @@ class TipePenjualanController extends Controller
     {
         $this->authorize('show', $tipePenjualan);
         $tipePenjualan->load('biayaTambahan');
-        return new TipePenjualanResource($tipePenjualan);
+        return new TipePenjualanShowResource($tipePenjualan);
     }
 
     public function update(Request $request, TipePenjualan $tipePenjualan)
@@ -92,6 +93,7 @@ class TipePenjualanController extends Controller
             $tipePenjualan
                 ->update([
                     'nama_tipe_penjualan' => $data['nama_tipe_penjualan'],
+                    'is_aktif' => $data['is_aktif'],
                 ]);
             $idTipePenjualanBiayaTambahan = [];
             foreach ($data['biaya_tambahan'] as $d) {
@@ -131,8 +133,9 @@ class TipePenjualanController extends Controller
     public function validation(){
         return [
             'nama_tipe_penjualan' => 'required|max:50',
+            'is_aktif' => 'required|max:1|min:0',
             'biaya_tambahan' => 'nullable',
-            'outlet' => 'nullable',
+            'outlet_id' => 'nullable',
         ];
     }
 }

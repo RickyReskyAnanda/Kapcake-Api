@@ -17,8 +17,8 @@ class PenyesuaianStokShow extends JsonResource
             return [
                     'id' => $this->id_penyesuaian_stok,
                     'tanggal' => dateFormat($this->created_at),
-                    'outlet' => new Outlet($this->outlet),
-                    'outlet_id' => $this->outlet_id,
+                    'outlet' => $this->outlet->nama_outlet ?? '',
+                    'tipe_item' => ucfirst($this->tipe_item),
                     'catatan' => ucfirst($this->catatan),
                     'selisih_stok' => $this->selisih_stok,
                     'entry' => PenyesuaianStokEntry::collection($this->entry)

@@ -16,7 +16,8 @@ class PelangganController extends Controller
                     ->bisnis
                     ->pelanggan()
                     ->where(function($q) use ($request){
-                            $q->where('nama_pelanggan', '%'.$request->pencarian.'%');
+                        if($request->has('pencarian') && $request->pencarian != '')
+                            $q->where('nama_pelanggan', 'like','%'.$request->pencarian.'%');
                     })
                     ->paginate();
         else
@@ -24,7 +25,8 @@ class PelangganController extends Controller
                     ->bisnis
                     ->pelanggan()
                     ->where(function($q) use ($request){
-                            $q->where('nama_pelanggan', '%'.$request->pencarian.'%');
+                        if($request->has('pencarian') && $request->pencarian != '')
+                            $q->where('nama_pelanggan', 'like','%'.$request->pencarian.'%');
                     })
                     ->get();
     }

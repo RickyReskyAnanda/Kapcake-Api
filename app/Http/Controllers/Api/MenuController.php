@@ -9,6 +9,7 @@ use DB;
 use App\Menu;
 use App\Http\Resources\MenuTable as MenuTableResource;
 use App\Http\Resources\Menu as MenuResource;
+use App\Image\BlobImageConvertion;
 
 class MenuController extends Controller
 {
@@ -29,6 +30,7 @@ class MenuController extends Controller
             });
             $q->orWhere('nama_menu', 'like', '%'.request()->pencarian.'%');
         })
+        ->latest()
         ->paginate();
         else
             $data = $request->user()->bisnis
@@ -53,18 +55,17 @@ class MenuController extends Controller
         $data = $request->validate($this->validation());
         DB::beginTransaction();
         try {
-            foreach ($data['outlet'] as $value) {
                 $gambar = [];
                 if($data['gambar'] ){
-                    $gambar = $this->uploadGambar($data['gambar']);
+                    $gambar = BlobImageConvertion::image($data['gambar'], 'menu');
                 }
 
-                $menu = Menu::create( $data['data'] + $value);
+                $menu = Menu::create( $data['data']);
                 
 
                 foreach ($data['variasi'] as  $variasi) {
                     $variasiMenu = $menu->variasi()->create([
-                        'outlet_id' => $value['outlet_id'],
+                        'outlet_id' => $menu->outlet_id,
                         'kategori_menu_id' => $variasi['kategori_menu_id'],
                         'nama_variasi_menu' => $variasi['nama_variasi_menu'],
                         'harga' => $variasi['harga'],
@@ -93,7 +94,6 @@ class MenuController extends Controller
                 foreach ($gambar as $key => $d) {
                     $menu->gambar()->create($d);
                 }
-            }
 
             DB::commit();
             return response('success',200);
@@ -107,7 +107,7 @@ class MenuController extends Controller
     public function show(Menu $menu)
     {
         $this->authorize('show', $menu);
-        $menu->load('kategori','variasi','itemTambahan', 'tipePenjualan');
+        $menu->load('kategori','variasi','itemTambahan', 'tipePenjualan', 'thumbGambar');
         return new MenuResource($menu);
     }
 
@@ -120,7 +120,7 @@ class MenuController extends Controller
         try {   
                 $gambar = [];
                 if($data['gambar'] ){
-                    $gambar = $this->uploadGambar($data['gambar']);
+                    $gambar = BlobImageConvertion::image($data['gambar'], 'menu');
                 }
 
                 $menu->update($data['data']);
@@ -200,9 +200,9 @@ class MenuController extends Controller
                     ->itemTambahan()
                     ->whereNotIn('id_item_tambahan_menu', $itemTambahanId)
                     ->delete();
-
                 if(count($gambar) > 0 ){
-                    $menu->gambar()->delete();
+                    if(isset($menu->thumbGambar)) $menu->thumbGambar->delete();
+                    if(isset($menu->oriGambar)) $menu->oriGambar->delete();
                     foreach ($gambar as $key => $d) {
                         $menu->gambar()->create($d);
                     }
@@ -238,36 +238,13 @@ class MenuController extends Controller
             'data.is_tipe_penjualan' => 'required|numeric',
             'data.is_inventarisasi' => 'required|numeric',
             'data.keterangan' => 'nullable', 
+            'data.outlet_id' => 'nullable', 
 
             'gambar' => 'nullable', 
             'tipe_penjualan' => 'nullable', 
             'variasi' => 'nullable', 
             'item_tambahan' => 'nullable', 
-            'outlet' => 'nullable', 
         ];
     }
 
-    private function uploadGambar($gambar){
-        $name = uniqid().time().uniqid().'.' . explode('/', explode(':', substr($gambar, 0, strpos($gambar, ';')))[1])[1];
-        $path = storage_path('/app/public/images/menu/').$name;
-        \Image::make($gambar)->save($path);
-
-        $path2 = storage_path('/app/public/images/menu/thumb_').$name;
-        \Image::make($gambar)->resize(250, 250, function($constraint) {
-            $constraint->aspectRatio();
-        })->save($path2);
-
-        return  [
-            [ 
-                'path' => 'storage/images/menu/'.$name,
-                'nama' => $name,
-                'is_thumbnail' => 0
-            ],
-            [
-                'path' => 'storage/images/menu/thumb_'.$name,
-                'nama' => 'thumb_'.$name,
-                'is_thumbnail' => 1
-            ]
-        ];
-    }
 }

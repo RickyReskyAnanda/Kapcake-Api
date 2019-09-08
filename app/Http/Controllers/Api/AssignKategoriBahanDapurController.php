@@ -9,10 +9,14 @@ use App\Http\Resources\AssignKategoriBahanDapur as AssignKategoriBahanDapurResou
 class AssignKategoriBahanDapurController extends Controller
 {
     public function index(Request $request){
-    	$data = $request->user()->bisnis
+        $kategori = $request->user()
+                    ->bisnis
+                    ->kategoriBahanDapur()
+                    ->find($request->kategori_bahan_dapur_id);
+    	$data = $request->user()
+                    ->bisnis
                     ->bahanDapur()
-                    ->where('outlet_id', auth()->user()->outlet_terpilih_id)
-                    ->where('nama_bahan_dapur', 'like', '%'.request()->pencarian.'%')
+                    ->where('outlet_id', $kategori->outlet_id)
                     ->get();
         return AssignKategoriBahanDapurResource::collection($data);
     }

@@ -46,23 +46,23 @@ class MejaController extends Controller
         // $this->authorize('create', Meja::class);
 
         $data = $request->validate($this->validation());
-        // DB::beginTransaction();
-        // try {
-            // if($request->has('outlet_id') && $request->outlet_id > 0){
+        DB::beginTransaction();
+        try {
+            if($request->has('outlet_id') && $request->outlet_id > 0){
                 $request->user()
                             ->bisnis
                             ->meja()
                             ->create($data);
-                // DB::commit();
-                // return response('success',200);
-            // }else{
-            //     DB::rollback();
-            //     return response('error',500);
-            // }
-        // } catch (\Exception $e){
-        //     DB::rollback();
-        //     return response('error',500);
-        // } 
+                DB::commit();
+                return response('success',200);
+            }else{
+                DB::rollback();
+                return response('error',500);
+            }
+        } catch (\Exception $e){
+            DB::rollback();
+            return response('error',500);
+        } 
     }
 
     public function show(Meja $meja)

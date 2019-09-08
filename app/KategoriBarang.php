@@ -24,6 +24,10 @@ class KategoriBarang extends Model
         $this->attributes['nama_kategori_barang'] = ucfirst($value);
     }
 
+    public function jumlahBarang(){
+        return $this->barang()->where('outlet_id', $this->outlet_id)->count();
+    }
+
     public static function boot() {
         parent::boot();
 

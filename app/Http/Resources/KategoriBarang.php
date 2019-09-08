@@ -18,7 +18,7 @@ class KategoriBarang extends JsonResource
                 'id' => $this->id_kategori_barang,
                 'nama' => $this->nama_kategori_barang,
                 'outlet' => $this->outlet->nama_outlet ?? '',
-                'total_barang' => $this->barang->count(),
+                'total_barang' => $this->jumlahBarang($request->outlet_id ?? 0) . ' Barang Ditandai',
         ];
     }
 }

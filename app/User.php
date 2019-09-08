@@ -68,6 +68,15 @@ class User extends Authenticatable
         return $this->is_super_admin == 1 ? true : false ;
     }
 
+    public function outletId(){
+        $outletId = $this->outlet()->select('outlet_id')->get();
+        $idOutlets = [];
+        foreach ($outletId as $key => $value) {
+            array_push($idOutlets, $value['outlet_id']);
+        }
+        return $idOutlets;
+    }
+
     
     public static function boot() {
         parent::boot();

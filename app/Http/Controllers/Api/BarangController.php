@@ -16,18 +16,27 @@ class BarangController extends Controller
         if(isset($request->paginate) && $request->paginate == 'true')
             $data = $request->user()->bisnis
                     ->barang()
-                    ->with('kategori', 'satuan')
-                    ->where('outlet_id', $request->outlet_id)
-                    ->where('kategori_barang_id', $request->kategori_barang_id > 0 ? '=' :'!=' , $request->kategori_barang_id )
-                    ->where(function($q){
-                        $q->whereHas('kategori', function($q){
-                            $q->where('nama_kategori_barang', 'like', '%'.request()->pencarian.'%');
-                        });
-                        $q->orWhereHas('satuan', function($q){
-                            $q->where('satuan', 'like', '%'.request()->pencarian.'%');
-                        });
-                        $q->orWhere('nama_barang', 'like', '%'.request()->pencarian.'%');
+                    ->with('kategori', 'satuan','outlet')
+                    ->where(function($q) use ($request){
+                        if($request->has('outlet_id') && $request->outlet_id != '' && $request->outlet_id != 0)
+                            $q->where('outlet_id', $request->outlet_id);
+
+                        if($request->has('kategori_barang_id') && $request->kategori_barang_id != '' && $request->kategori_barang_id != 0)
+                            $q->where('kategori_barang_id', $request->kategori_barang_id);
+
+                        if($request->has('pencarian')){
+                            $q->where(function($q) use ($request){
+                                $q->whereHas('kategori', function($q) use ($request){
+                                    $q->where('nama_kategori_barang', 'like', '%'.$request->pencarian.'%');
+                                });
+                                $q->orWhereHas('satuan', function($q) use ($request){
+                                    $q->where('satuan', 'like', '%'.$request->pencarian.'%');
+                                });
+                                $q->orWhere('nama_barang', 'like', '%'.$request->pencarian.'%');
+                            });
+                        }
                     })
+                    ->orderBy('created_at','desc')
                     ->paginate();
         // else
         //     $data = $request->user()->bisnis
@@ -43,7 +52,7 @@ class BarangController extends Controller
         //                 });
         //             })
         //             ->get();
-        return barangResource::collection($data);
+        return BarangResource::collection($data);
     }
 
     public function store(Request $request)
@@ -53,13 +62,9 @@ class BarangController extends Controller
         $data = $request->validate($this->validation());
         DB::beginTransaction();
         try {   
-            foreach ($data['outlet'] as $d) {
                 $barang = $request->user()->bisnis
                                 ->barang()
-                                ->create(
-                                    $data['data'] + $d
-                                );
-            }
+                                ->create($data);
             DB::commit();
             return response('success',200);
         } catch (\Exception $e) {
@@ -82,8 +87,7 @@ class BarangController extends Controller
 
         DB::beginTransaction();
         try {   
-            $barang
-                ->update($data['data']);
+            $barang->update($data);
             DB::commit();
             return response('success',200);
         } catch (\Exception $e) {
@@ -109,8 +113,14 @@ class BarangController extends Controller
 
     public function validation(){
         return [
-            'data' => 'required',
-            'outlet' => 'nullable',
+            'nama_barang' => 'required',
+            'kategori_barang_id' => 'required',
+            'is_inventarisasi' => 'required',
+            'stok' => 'required',
+            'stok_rendah' => 'required',
+            'satuan_id' => 'required',
+            'keterangan' => 'required',
+            'outlet_id' => 'nullable',
         ];
     }
 }

@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-
+use App\Http\Resources\LaporanTransaksi as LaporanTransaksiCollection;
 use DB;
 
 class LaporanController extends Controller
@@ -30,7 +30,7 @@ class LaporanController extends Controller
 			    		SUM(total) as total
 			    	"))
 			    	->where(function ($q) use ($request, $user){
-			    		if($request->has('outlet_id') && $request->outlet_id != '')
+			    		if($request->has('outlet_id') && $request->outlet_id != '' && $request->outlet_id != 0)
 					    	$q->where('outlet_id', $request->outlet_id);
 			    		if(	$request->has('tanggal_awal')  && 
 			    			$request->has('tanggal_akhir') && 
@@ -41,7 +41,7 @@ class LaporanController extends Controller
 				    		$q->where('tanggal_proses','<=',$request->tanggal_akhir);
 			    		}
 			    	})
-			    	->groupBy('outlet_id')
+			    	->groupBy('bisnis_id')
 			    	->first();
 
 
@@ -70,10 +70,11 @@ class LaporanController extends Controller
 		$data = $user
 		    	->bisnis
 		    	->penjualanItem()
-		    	->with('variasiMenu','menu.kategori')
+		    	->with('variasiMenu','menu.kategori','outlet')
 		    	->select(DB::raw("
 	    			penjualan_item.variasi_menu_id,
 	    			penjualan_item.menu_id,
+	    			penjualan_item.outlet_id,
 		    		SUM(penjualan_item.jumlah) as total_penjualan_item,
 		    		SUM(penjualan_item.jumlah_refund) as total_pengembalian_item,
 		    		SUM(penjualan_item.subtotal) as total_penjualan_kotor, 
@@ -82,7 +83,7 @@ class LaporanController extends Controller
 		    	"))
 		    	->where(function ($q) use ($request){
 		    		$q->where('penjualan.status','sukses');
-		    		if($request->has('outlet_id'))
+		    		if($request->has('outlet_id') && $request->outlet_id != '' && $request->outlet_id != 0)
 				    	$q->where('penjualan_item.outlet_id', $request->outlet_id);
 
 		    		if(	$request->has('tanggal_awal')  && 
@@ -92,10 +93,34 @@ class LaporanController extends Controller
 			    		$q->where('penjualan.tanggal_proses', '>=', $request->tanggal_awal);
 			    		$q->where('penjualan.tanggal_proses', '<=', $request->tanggal_akhir);
 			    	}
+
+			    	if($request->has('pencarian')){
+			    		$q->where(function($q) use ($request){
+					    	$q->whereHas('menu', function ($query) use ($request) {
+
+						    	$query->whereHas('kategori', function ($query) use ($request) {
+								    $query->where('nama_kategori_menu', 'like', '%'.$request->pencarian.'%');
+								});
+
+							    $query->orWhere('nama_menu', 'like', '%'.$request->pencarian.'%');
+
+							});
+
+							$q->orWhereHas('variasiMenu', function ($query) use ($request) {
+						
+							    $query->where('nama_variasi_menu', 'like', '%'.$request->pencarian.'%');
+						
+							    $query->orwhere('sku', 'like', '%'.$request->pencarian.'%');
+						
+							});
+			    		});
+			    	
+			    	}
 		    	})
 		    	->rightJoin('penjualan','penjualan.id_penjualan','penjualan_item.penjualan_id')
 		    	->groupBy('penjualan_item.menu_id')
 		    	->groupBy('penjualan_item.variasi_menu_id')
+		    	->groupBy('penjualan_item.outlet_id')
 		    	->paginate(20);
 
 		return response()->json($data);
@@ -106,9 +131,7 @@ class LaporanController extends Controller
 
 		/*
 		| seleksi status belum ada , berikan seleksi status ketika perbaikan total
-		| sku belum ditampilkan karena ambil dari tabel variasi_menu
 		| diskon belum masuk dalam diskon item. jadi sementara dikurangi dengan diskon transaksi
-		| berikan filter pencarian 
 		*/    	
 
 		/*
@@ -141,11 +164,14 @@ class LaporanController extends Controller
 			    		$q->where('penjualan.tanggal_proses', '>=', $request->tanggal_awal);
 			    		$q->where('penjualan.tanggal_proses', '<=', $request->tanggal_akhir);
 			    	}
+			    	if(	$request->has('pencarian') ){
+			    		$q->where('penjualan_item.nama_kategori_menu', 'like', '%'.$request->pencarian.'%');
+			    	} 
 		    	})
 		    	->rightJoin('penjualan','penjualan.id_penjualan','penjualan_item.penjualan_id')
 		    	->groupBy('penjualan_item.nama_kategori_menu')
 		    	->orderBy('penjualan_item.nama_kategori_menu','asc')
-		    	->paginate(20);
+		    	->paginate(15);
 
 		return response()->json($data);
     }
@@ -168,9 +194,18 @@ class LaporanController extends Controller
 			    		$q->where('tanggal_proses','>=',$request->tanggal_awal);
 			    		$q->where('tanggal_proses','<=',$request->tanggal_akhir);
 		    		}
-		    	})
-		    	->paginate(20);
-		return response()->json($data);
+
+		    		if($request->has('pencarian')){
+		    			$q->where(function($q) use ($request){
+			    			$q->where('kode_pemesanan', 'like', '%'.$request->pencarian.'%');
+			    			$q->orWhere('tanggal_proses', 'like', '%'.$request->pencarian.'%');
+			    			$q->orWhere('waktu_proses', 'like', '%'.$request->pencarian.'%');
+			    			$q->orWhere('nama_user', 'like', '%'.$request->pencarian.'%');
+			    		});
+		    		}
+		    	})->paginate(15);
+
+		return LaporanTransaksiCollection::collection($data);
     }
 
     /*
@@ -222,6 +257,13 @@ class LaporanController extends Controller
 			    		$q->where('tanggal_proses','>=',$request->tanggal_awal);
 			    		$q->where('tanggal_proses','<=',$request->tanggal_akhir);
 		    		}
+
+		    		if($request->has('pencarian')){
+		    			$q->where(function($q) use ($request){
+				    			$q->where('nama_diskon', 'like', '%'.$request->pencarian.'%');
+				    			$q->orWhere('jumlah_diskon', 'like', '%'.$request->pencarian.'%');
+		    			});
+		    		}
 		    	})
 		    	->where('diskon_id', '!=', 0)
 		    	->groupBy('nama_diskon')
@@ -249,6 +291,15 @@ class LaporanController extends Controller
 			    		$q->where('tanggal_proses','>=',$request->tanggal_awal);
 			    		$q->where('tanggal_proses','<=',$request->tanggal_akhir);
 		    		}
+
+		    		if($request->has('pencarian')){
+		    			$q->where(function($q) use ($request){
+				    		$q->whereHas('pajak',function($q) use ($request){
+				    			$q->where('nama_pajak', 'like', '%'.$request->pencarian.'%');
+				    			$q->orWhere('jumlah', 'like', '%'.$request->pencarian.'%');
+				    		});
+		    			});
+		    		}
 		    	})
 		    	->where('pajak_id', '!=', 0)
 		    	->groupBy('pajak_id')
@@ -273,6 +324,15 @@ class LaporanController extends Controller
 			    			$request->tanggal_akhir != '' ){
 			    		$q->where('tanggal_proses','>=',$request->tanggal_awal);
 			    		$q->where('tanggal_proses','<=',$request->tanggal_akhir);
+		    		}
+
+		    		if($request->has('pencarian')){
+		    			$q->where(function($q) use ($request){
+				    		$q->whereHas('biayaTambahan',function($q) use ($request){
+				    			$q->where('nama_biaya_tambahan', 'like', '%'.$request->pencarian.'%');
+				    			$q->orWhere('jumlah', 'like', '%'.$request->pencarian.'%');
+				    		});
+		    			});
 		    		}
 		    	})
 		    	->where('biaya_tambahan_id', '!=', 0)

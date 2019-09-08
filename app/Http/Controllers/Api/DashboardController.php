@@ -14,8 +14,9 @@ class DashboardController extends Controller
 					    	->bisnis
 					    	->penjualan()
 					    	->select(DB::raw("sum(subtotal) / (DATEDIFF('{$request->tanggal_akhir}','{$request->tanggal_awal}') + 1) as rata_rata_penjualan_perhari, count(*) as total_transaksi, sum(subtotal) as total_penjualan_kotor, sum(total_item) as total_produk_terjual,SUM(total_pajak) as total_pajak_terkumpul, SUM(total_diskon) as total_diskon"))
-					    	->where('outlet_id', $request->outlet_id)
 					    	->where(function($q) use ($request){
+					    		if($request->has('outlet_id') && $request->outlet_id !='' && $request->outlet_id)
+							    	$q->where('outlet_id', $request->outlet_id);
 					    		$q->where('tanggal_proses','>=',$request->tanggal_awal);
 					    		$q->where('tanggal_proses','<=',$request->tanggal_akhir);
 					    	})

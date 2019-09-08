@@ -9,10 +9,14 @@ use App\Http\Resources\AssignKategoriBarang as AssignKategoriBarangResource;
 class AssignKategoriBarangController extends Controller
 {
     public function index(Request $request){
+        $kategori = $request->user()->bisnis
+                    ->kategoriBarang()
+                    ->find($request->kategori_barang_id);
     	$data = $request->user()->bisnis
                     ->barang()
-                    ->where('outlet_id', auth()->user()->outlet_terpilih_id)
-                    ->where('nama_barang', 'like', '%'.request()->pencarian.'%')
+                    ->where(function($q) use ($kategori){
+                            $q->where('outlet_id', $kategori->outlet_id);
+                    })
                     ->get();
         return AssignKategoriBarangResource::collection($data);
     }

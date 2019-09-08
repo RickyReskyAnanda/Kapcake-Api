@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class TipePenjualan extends JsonResource
+class TipePenjualanIndex extends JsonResource
 {
     /**
      * Transform the resource collection into an array.
@@ -17,9 +17,8 @@ class TipePenjualan extends JsonResource
             return [
                     'id' => $this->id_tipe_penjualan,
                     'nama' => $this->nama_tipe_penjualan,
-                    'is_aktif' => $this->is_aktif == 1 ? 'Aktif':'Nonaktif',
+                    'is_aktif' => $this->is_aktif == 1 ? 'Aktif':'Tidak Aktif',
                     'total_biaya_tambahan' => $this->biayaTambahan->count(),
-                    'biaya_tambahan' => TipePenjualanBiayaTambahan::collection($this->biayaTambahan),
             ];
     }
 }

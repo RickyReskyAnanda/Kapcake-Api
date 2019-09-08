@@ -23,6 +23,7 @@ class Menu extends JsonResource
                 'variasi' => MenuVariasi::collection($this->variasi),
                 'tipe_penjualan' => MenuTipePenjualan::collection($this->tipePenjualan),
                 'item_tambahan' => MenuItemTambahan::collection($this->itemTambahan),
+                'thumb' => $this->thumbGambar->link ?? '',
                 'keterangan' => $this->keterangan,
         ];
     }

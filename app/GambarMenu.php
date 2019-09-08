@@ -3,7 +3,6 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-
 class GambarMenu extends Model
 {
     protected $table = 'gambar_menu';
@@ -18,10 +17,10 @@ class GambarMenu extends Model
             $user = auth()->user();
             $model->bisnis_id = $user->bisnis_id;
         });
-    }
 
-    public function getPathAttribute($value)
-    {
-        return url($value);
+        static::deleting(function ($model) {
+            
+            unlink($model->access_path);
+        });
     }
 }

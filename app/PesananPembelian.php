@@ -11,6 +11,10 @@ class PesananPembelian extends Model
 
     protected $guarded = [];
 
+    public function user(){
+        return $this->belongsTo(User::class,'user_id');
+    }
+
     public function outlet(){
         return $this->belongsTo(Outlet::class,'outlet_id');
     }
@@ -28,7 +32,13 @@ class PesananPembelian extends Model
 
         static::creating(function ($model) {
             $user = auth()->user();
+            $model->user_id = $user->id;
             $model->bisnis_id = $user->bisnis_id;
+        });
+        static::created(function ($model) {
+            $user = auth()->user();
+            $model->no_order = zeroFill($model->id_pesanan_pembelian);
+            $model->save();
         });
 
         static::updated(function ($model) {

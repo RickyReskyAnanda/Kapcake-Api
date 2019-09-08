@@ -25,7 +25,6 @@ class PenyesuaianStokEntry extends JsonResource
         }
 
         return [
-            'id' => $this->id_penyesuaian_stok_entry,
             'item_id' => $this->item_id,
             'nama_item' => $namaItem,
             'stok_sistem' =>$this->stok_sistem,

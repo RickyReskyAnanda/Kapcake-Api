@@ -55,13 +55,11 @@ class BahanDapurController extends Controller
         $data = $request->validate($this->validation());
         DB::beginTransaction();
         try {   
-            foreach ($data['outlet'] as $d) {
-                $request->user()->bisnis
-                    ->bahanDapur()
-                    ->create(
-                        $data['data'] + $d
-                    );
-            }
+
+            $request->user()->bisnis
+                ->bahanDapur()
+                ->create($data);
+
             DB::commit();
             return response('success',200);
         } catch (\Exception $e) {
@@ -85,8 +83,8 @@ class BahanDapurController extends Controller
 
         DB::beginTransaction();
         try {   
-            $bahanDapur
-                ->update($data['data']);
+
+            $bahanDapur->update($data);
 
             DB::commit();
             return response('success',200);
@@ -113,8 +111,14 @@ class BahanDapurController extends Controller
 
     public function validation(){
         return [
-            'data' => 'required',
-            'outlet' => 'nullable',
+            'nama_bahan_dapur'  => 'required',
+            'kategori_bahan_dapur_id'  => 'required',
+            'is_inventarisasi'  => 'required',
+            'stok'  => 'required',
+            'stok_rendah'  => 'required',
+            'satuan_id'  => 'required',
+            'keterangan'  => 'required',
+            'outlet_id'  => 'nullable'
         ];
     }
 }

@@ -17,6 +17,7 @@ class Barang extends JsonResource
         return [
                 'id' => $this->id_barang,
                 'kategori' => $this->kategori->nama_kategori_barang ?? "Tidak Dikategorikan",
+                'outlet' => $this->outlet->nama_outlet ?? "",
                 'satuan' => $this->satuan->satuan ?? "-",
                 'nama' => $this->nama_barang,
                 'stok' => $this->stok,

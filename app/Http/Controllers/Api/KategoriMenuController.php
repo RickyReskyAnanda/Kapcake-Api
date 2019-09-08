@@ -29,10 +29,8 @@ class KategoriMenuController extends Controller
             $data =  $request->user()
                     ->bisnis
                     ->kategoriMenu()
-                    // ->where(function($q){
-                    //     if(isset(request()->pencarian))
-                    //         $q->where('nama_kategori_menu', request()->pencarian);
-                    // })
+                    ->where('outlet_id', $request->has('outlet_id') ? $request->outlet_id : 0)    
+                    ->orderBy('nama_kategori_menu','asc')
                     ->get();
 
         return KategoriMenuResource::collection($data);
@@ -45,13 +43,9 @@ class KategoriMenuController extends Controller
         $data = $request->validate($this->validation());
         DB::beginTransaction();
         try {   
-            foreach($request->outlet as $o)
-                $kategoriMenu = $request->user()->bisnis
+                $request->user()->bisnis
                             ->kategoriMenu()
-                            ->create([
-                                'outlet_id' => $o['outlet_id'],
-                                'nama_kategori_menu' => $data['nama_kategori_menu']
-                            ]);
+                            ->create($data);
             DB::commit();
             return response('success',200);
         } catch (\Exception $e) {
@@ -75,11 +69,7 @@ class KategoriMenuController extends Controller
 
         DB::beginTransaction();
         try {   
-            $kategoriMenu
-                ->update([
-                    'nama_kategori_menu' => $data['nama_kategori_menu']
-                ]);
-
+            $kategoriMenu ->update($data);
             DB::commit();
             return response('success',200);
         } catch (\Exception $e) {
@@ -106,7 +96,7 @@ class KategoriMenuController extends Controller
     public function validation(){
         return [
             'nama_kategori_menu' => 'required|max:255',
-            'outlet' => 'nullable',
+            'outlet_id' => 'nullable',
         ];
     }
 }

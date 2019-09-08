@@ -6,6 +6,7 @@ Route::get('/clear-cache', function() {
     $exitCode = Artisan::call('view:cache');
     return 'DONE'; //Return anything
 });
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes

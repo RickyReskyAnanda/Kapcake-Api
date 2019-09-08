@@ -49,6 +49,12 @@ Route::group(['middleware' => 'auth:api'], function(){
 	Route::put('item-tambahan/{itemTambahan}','Api\ItemTambahanController@update');
 	Route::delete('item-tambahan/{itemTambahan}','Api\ItemTambahanController@destroy');
 	
+	Route::get('diskon','Api\DiskonController@index');
+	Route::post('diskon','Api\DiskonController@store');
+	Route::get('diskon/{diskon}','Api\DiskonController@show');
+	Route::put('diskon/{diskon}','Api\DiskonController@update');
+	Route::delete('diskon/{diskon}','Api\DiskonController@destroy');
+
 	Route::get('pajak','Api\PajakController@index');
 	Route::post('pajak','Api\PajakController@store');
 	Route::get('pajak/{pajak}','Api\PajakController@show');

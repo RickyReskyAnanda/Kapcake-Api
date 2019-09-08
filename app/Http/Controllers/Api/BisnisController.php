@@ -11,7 +11,7 @@ use App\Http\Controllers\Controller;
 class BisnisController extends Controller
 {
 	public function show(Bisnis $bisnis){
-		return $bisnis;
+		return $bisnis->load('thumbLogo');
 	}
 
 	public function update(Request $request, Bisnis $bisnis){

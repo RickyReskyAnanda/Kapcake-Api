@@ -54,16 +54,10 @@ class BiayaTambahanController extends Controller
         $data = $request->validate($this->validation());
         DB::beginTransaction();
         try {   
-            foreach ($data['outlet'] as $d) {
                 $biayaTambahan = $request->user()
                             ->bisnis
                             ->biayaTambahan()
-                            ->create([
-                                'outlet_id' => $d['outlet_id'],
-                                'nama_biaya_tambahan' => $data['nama_biaya_tambahan'],
-                                'jumlah' => $data['jumlah']
-                            ]);
-            }
+                            ->create($data);
             DB::commit();
             return response('success',200);
         } catch (\Exception $e) {
@@ -100,11 +94,7 @@ class BiayaTambahanController extends Controller
 
         DB::beginTransaction();
         try {   
-            $biayaTambahan
-                ->update([
-                    'nama_biaya_tambahan' => $data['nama_biaya_tambahan'],
-                    'jumlah' => $data['jumlah']
-                ]);
+            $biayaTambahan->update($data);
 
             DB::commit();
             return response('success',200);
@@ -138,8 +128,8 @@ class BiayaTambahanController extends Controller
     public function validation(){
         return [
             'nama_biaya_tambahan' => 'required|max:50',
-            'jumlah' => 'required|numeric|max:100',
-            'outlet' => 'nullable',
+            'jumlah' => 'required|numeric|max:100|min:0',
+            'outlet_id' => 'nullable|numeric',
         ];
     }
 }

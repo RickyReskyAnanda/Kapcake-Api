@@ -6,6 +6,7 @@ use App\KategoriBahanDapur;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\KategoriBahanDapur as KategoriBahanDapurResource;
+use App\Http\Resources\KategoriBahanDapurShow as KategoriBahanDapurShowResource;
 
 class KategoriBahanDapurController extends Controller
 {
@@ -13,21 +14,23 @@ class KategoriBahanDapurController extends Controller
     {
         $this->authorize('view', KategoriBahanDapur::class);
 
-        if(isset($request->paginate) && $request->paginate == 'true')
+        if($request->has('paginate') && $request->paginate == 'true')
             $data =  $request->user()->bisnis
                     ->kategoriBahanDapur()
-                    ->where(function($q){
-                        $q->where('is_paten', 0);
-                        $q->where('outlet_id', auth()->user()->outlet_terpilih_id);
-                        $q->where('nama_kategori_bahan_dapur','like', '%'.request()->pencarian.'%');
-                    })->paginate();
+                    ->with('outlet')
+                    ->where(function($q) use ($request){
+                        if($request->has('outlet_id') && $request->outlet_id != '' && $request->outlet_id != 0)
+                            $q->where('outlet_id', $request->outlet_id);
+                        if($request->has('pencarian'))
+                            $q->where('nama_kategori_bahan_dapur','like', '%'.$request->pencarian.'%');
+                    })
+                    ->latest()
+                    ->paginate();
         else
             $data =  $request->user()->bisnis
                     ->kategoriBahanDapur()
-                    // ->where(function($q){
-                    //     if(isset(request()->pencarian))
-                    //         $q->where('nama_kategori_menu', request()->pencarian);
-                    // })
+                    ->where('outlet_id', $request->has('outlet_id') ? $request->outlet_id : 0)    
+                    ->orderBy('nama_kategori_bahan_dapur','asc')
                     ->get();
 
         return KategoriBahanDapurResource::collection($data);
@@ -40,13 +43,9 @@ class KategoriBahanDapurController extends Controller
         $data = $request->validate($this->validation());
         DB::beginTransaction();
         try {   
-            foreach($request->outlet as $o)
-                $kategoriBahanDapur = $request->user()->bisnis
+                $request->user()->bisnis
                             ->kategoriBahanDapur()
-                            ->create([
-                                'outlet_id' => $o['outlet_id'],
-                                'nama_kategori_bahan_dapur' => $data['nama_kategori_bahan_dapur']
-                            ]);
+                            ->create($data);
             DB::commit();
             return response('success',200);
         } catch (\Exception $e) {
@@ -59,7 +58,7 @@ class KategoriBahanDapurController extends Controller
     {
         $this->authorize('show', $kategoriBahanDapur);
         
-        return $kategoriBahanDapur;
+        return new KategoriBahanDapurShowResource($kategoriBahanDapur);
     }
 
     public function update(Request $request, KategoriBahanDapur $kategoriBahanDapur)
@@ -71,9 +70,7 @@ class KategoriBahanDapurController extends Controller
         DB::beginTransaction();
         try {   
             $kategoriBahanDapur
-                ->update([
-                    'nama_kategori_bahan_dapur' => $data['nama_kategori_bahan_dapur']
-                ]);
+                ->update($data);
 
             DB::commit();
             return response('success',200);
@@ -101,7 +98,7 @@ class KategoriBahanDapurController extends Controller
     private function validation(){
         return [
             'nama_kategori_bahan_dapur' => 'required|max:255',
-            'outlet' => 'nullable',
+            'outlet_id' => 'nullable',
         ];
     }
 }

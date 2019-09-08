@@ -29,14 +29,8 @@ class KategoriMejaController extends Controller
             $data = $request->user()
                     ->bisnis
                     ->kategoriMeja()
-                    ->where(function($q) use ($request){
-                        if($request->has('outlet_id') && $request->outlet_id != 0)
-                            $q->where('outlet_id', $request->outlet_id);
-
-                        $q->where('is_aktif', $request->has('aktif') ? $request->aktif : 2);
-                        if($request->has('pencarian'))
-                            $q->where('nama_kategori_meja', $request->has('pencarian'));
-                    })
+                    ->where('outlet_id', $request->has('outlet_id') ? $request->outlet_id : 0)    
+                    ->where('is_aktif', 1)
                     ->get();
         return KategoriMejaIndexResource::collection($data);
     }

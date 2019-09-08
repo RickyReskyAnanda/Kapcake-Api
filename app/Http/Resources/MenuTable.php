@@ -16,7 +16,7 @@ class MenuTable extends JsonResource
     {
         return [
                 'id' => $this->id_menu,
-                'kategori' => $this->kategori->nama_kategori_menu,
+                'kategori' => $this->kategori->nama_kategori_menu ?? 'Tidak Ada Kategori',
                 // 'gambar' => $this->gambar ? $this->gambar->path : '',
                 'nama' => $this->nama_menu,
                 'tipe_penjualan' => $this->tipePenjualanData(),
@@ -34,7 +34,7 @@ class MenuTable extends JsonResource
         elseif($jumlah == 1 )
             return $this->tipePenjualan[0]->tipePenjualan->nama_tipe_penjualan ?? '';
         elseif($jumlah > 1)
-            return $jumlah.' Tipe Penjualan'; 
+            return $jumlah.' Jenis Pemesanan'; 
     }
 
     private function hargaData(){

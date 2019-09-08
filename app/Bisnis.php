@@ -32,6 +32,10 @@ class Bisnis extends Model
     	return $this->hasMany(ItemTambahan::class, 'bisnis_id');
     }
 
+    public function diskon(){
+        return $this->hasMany(Diskon::class, 'bisnis_id');
+    }
+
     public function pajak(){
         return $this->hasMany(Pajak::class, 'bisnis_id');
     }
@@ -131,6 +135,10 @@ class Bisnis extends Model
     ///////////////// KHUSUS ///////////////////
     public function logo(){
         return $this->hasMany(GambarBisnis::class, 'bisnis_id');
+    }
+
+    public function thumbLogo(){
+        return $this->hasOne(GambarBisnis::class, 'bisnis_id')->where('is_thumbnail',1);
     }
 
 

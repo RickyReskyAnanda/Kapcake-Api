@@ -27,6 +27,7 @@ class TransferEntry extends JsonResource
             'nama_item' => $namaItem,
             'stok' =>$this->stok,
             'jumlah_transfer' =>$this->jumlah_transfer,
+            'sisa_stok' =>$this->sisa_stok,
         ];
     }
 }

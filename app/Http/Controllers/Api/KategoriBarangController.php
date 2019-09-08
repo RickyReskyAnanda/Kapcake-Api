@@ -16,19 +16,24 @@ class KategoriBarangController extends Controller
         if(request()->has('paginate') && $request->paginate == 'true'){
             $data = $request->user()->bisnis
                     ->kategoriBarang()
-                    ->where(function($q){
-                        $q->where('is_paten', 0);
-                        $q->where('outlet_id', auth()->user()->outlet_terpilih_id);
-                        $q->where('nama_kategori_barang','like', '%'.request()->pencarian.'%');
-                    })->paginate();
-            return KategoriBarangResource::collection($data);
+                    ->with('outlet')
+                    ->where(function($q) use ($request){
+                        if($request->has('outlet_id') && $request->outlet_id != '' && $request->outlet_id != 0)
+                            $q->where('outlet_id', $request->outlet_id);
+                        if($request->has('pencarian'))
+                            $q->where('nama_kategori_barang','like', '%'.request()->pencarian.'%');
+                    })
+                    ->latest()
+                    ->paginate();
         }
         else
-            return $data = $request->user()->bisnis
+            $data = $request->user()->bisnis
                     ->kategoriBarang()
-                    ->where('outlet_id', auth()->user()->outlet_terpilih_id)    
+                    ->where('outlet_id', $request->has('outlet_id') ? $request->outlet_id : 0)    
+                    ->orderBy('nama_kategori_barang','asc')
                     ->get();
-                    
+
+        return KategoriBarangResource::collection($data);
     }
 
     public function store(Request $request)
@@ -39,13 +44,9 @@ class KategoriBarangController extends Controller
 
         DB::beginTransaction();
         try {   
-            foreach($request->outlet as $o)
-                $kategoriBarang = $request->user()->bisnis
+                $request->user()->bisnis
                             ->kategoriBarang()
-                            ->create([
-                                'outlet_id' => $o['outlet_id'],
-                                'nama_kategori_barang' => $data['nama_kategori_barang']
-                            ]);
+                            ->create($data);
             DB::commit();
             return response('success',200);
         } catch (\Exception $e) {
@@ -69,11 +70,7 @@ class KategoriBarangController extends Controller
 
         DB::beginTransaction();
         try {   
-            $kategoriBarang
-                ->update([
-                    'nama_kategori_barang' => $data['nama_kategori_barang']
-                ]);
-
+            $kategoriBarang ->update($data);
             DB::commit();
             return response('success',200);
         } catch (\Exception $e) {
@@ -100,7 +97,7 @@ class KategoriBarangController extends Controller
     public function validation(){
         return [
             'nama_kategori_barang' => 'required|max:50',
-            'outlet' => 'nullable',
+            'outlet_id' => 'nullable',
         ];
     }
 }

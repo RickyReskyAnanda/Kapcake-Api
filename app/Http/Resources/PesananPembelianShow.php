@@ -17,14 +17,22 @@ class PesananPembelianShow extends JsonResource
             return [
                     'id' => $this->id_pesanan_pembelian,
                     'outlet_id' => $this->outlet_id,
-                    'outlet' => new Outlet($this->outlet),
                     'supplier_id' => $this->supplier_id,
-                    'supplier' => new Supplier($this->supplier),
+                    'user' => [
+                                    'nama' => $this->user->name ?? '',
+                                    'email' => $this->user->email ?? '',
+                                    'telpon' => $this->user->telpon ?? '',
+                                    'alamat' => $this->user->alamat ?? ''
+                    ],
+                    'no_order' => $this->no_order,
+                    'tanggal' => date('Y-m-d, h:i', strtotime($this->created_at)),
+                    'nama_outlet' => $this->outlet->nama_outlet ?? '',
+                    'nama_supplier' => $this->supplier->nama ?? '',
                     'catatan' => $this->catatan,
-                    'status' => $this->status,
-                    'tipe_item' => $this->tipe_item,
+                    'status' => ucfirst($this->status),
+                    'tipe_item' => ucfirst($this->tipe_item),
                     'total' => $this->total,
                     'entry' => PesananPembelianEntry::collection($this->entry),
             ];
     }
-}
+} 

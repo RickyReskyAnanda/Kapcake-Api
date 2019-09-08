@@ -10,4 +10,8 @@ class Diskon extends Model
     protected $primaryKey = 'id_diskon';
 
     protected $guarded = [];
+
+    // public function outlet(){
+    // 	return $this->hasMany(OutletPajak::class,'pajak_id');
+    // }
 }

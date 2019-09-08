@@ -5,10 +5,10 @@ namespace App\Http\Controllers\api;
 use DB;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Pajak as PajakResource;
-use App\Pajak;
+use App\Http\Resources\Diskon as DiskonResource;
+use App\Diskon;
 
-class PajakController extends Controller
+class DiskonController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,42 +17,43 @@ class PajakController extends Controller
      */
     public function index(Request $request)
     {
-        $this->authorize('view', Pajak::class);
+        // $this->authorize('view', Diskon::class);
 
         if(isset($request->paginate) && $request->paginate == 'true')
             $data = $request->user()->bisnis
-                    ->pajak()
+                    ->diskon()
                     ->where('outlet_id', $request->has('outlet_id') ? $request->outlet_id : '')
                     ->where(function($q) use ($request){
-                        $q->where('nama_pajak', 'like', '%'.$request->pencarian.'%');
+                        $q->where('nama_diskon', 'like', '%'.$request->pencarian.'%');
                         $q->orWhere('jumlah', 'like', '%'.$request->pencarian.'%');
                     })
                     ->latest()
                     ->paginate();
         else
             $data = $request->user()->bisnis
-                    ->pajak()
-                    ->where('nama_kategori_menu', $request->has('outlet_id') ? $request->outlet_id : '0' )
-                    ->orderBy('nama_kategori_menu','asc')
+                    ->diskon()
+                    ->where('nama_diskon', $request->has('outlet_id') ? $request->outlet_id : '0' )
+                    ->orderBy('nama_diskon','asc')
                     ->get();
 
-        return PajakResource::collection($data);
+        return DiskonResource::collection($data);
     }
 
     public function store(Request $request)
     {
-        $this->authorize('create', Pajak::class);
+        // $this->authorize('create', Diskon::class);
         
         $data = $request->validate($this->validation());
         DB::beginTransaction();
         try {   
                 $request->user()->bisnis
-                            ->pajak()
+                            ->diskon()
                             ->create($data);
             DB::commit();
             return response('success',200);
         } catch (\Exception $e) {
             DB::rollback();
+            Debugbar::addThrowable($e);
             return response('error',500);
         }
     }
@@ -63,10 +64,10 @@ class PajakController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show(Pajak $pajak)
+    public function show(Diskon $diskon)
     {
-        $this->authorize('show', $pajak);
-        return new PajakResource($pajak);
+        // $this->authorize('show', $diskon);
+        return new DiskonResource($diskon);
     }
 
     /**
@@ -76,15 +77,15 @@ class PajakController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Pajak $pajak)
+    public function update(Request $request, Diskon $diskon)
     {
-        $this->authorize('update', $pajak);
+        // $this->authorize('update', $diskon);
 
         $data = $request->validate($this->validation());
 
         DB::beginTransaction();
         try {   
-            $pajak
+            $diskon
                 ->update($data);
 
             DB::commit();
@@ -101,13 +102,13 @@ class PajakController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Pajak $pajak)
+    public function destroy(Diskon $diskon)
     {
-        $this->authorize('delete', $pajak);
+        // $this->authorize('delete', $diskon);
 
         DB::beginTransaction();
         try {
-            $pajak->delete();
+            $diskon->delete();
             DB::commit();
             return response('success',200);
         } catch (\Exception $e) {
@@ -118,7 +119,7 @@ class PajakController extends Controller
 
     public function validation(){
         return [
-            'nama_pajak' => 'required|max:50',
+            'nama_diskon' => 'required|max:50',
             'jumlah' => 'required|numeric|max:100',
             'outlet_id' => 'nullable|numeric',
         ];

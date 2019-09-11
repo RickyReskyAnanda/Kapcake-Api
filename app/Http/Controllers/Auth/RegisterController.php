@@ -69,4 +69,19 @@ class RegisterController extends Controller
             'password' => Hash::make($data['password']),
         ]);
     }
+
+    public function confirmAccount($token)
+    {
+        $user = User::where('activation_token', $token)->first();
+        if ($user) {
+            $user->update([
+                'is_active' => 1,
+                'is_super_admin' => 1,
+                'api_token' => str_random(80).uniqid(),
+                'activation_token' => null
+            ]);
+            return redirect(backofficeDomain());
+        }
+        return redirect(backofficeDomain().'/invalid-token');
+    }
 }

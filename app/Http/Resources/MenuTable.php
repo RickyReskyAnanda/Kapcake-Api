@@ -45,7 +45,14 @@ class MenuTable extends JsonResource
                     $jumlahHarga += $variasi->tipePenjualan->count();
             }
             return $jumlahHarga;
+        }else{
+
+            $jumlahHarga = count($this->variasi);
+            if($jumlahHarga == 1){
+                return $this->variasi[0]->harga;                 
+            }
         }
+
     }
 
 }

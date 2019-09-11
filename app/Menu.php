@@ -58,10 +58,10 @@ class Menu extends Model
     }
 
     public function totalStok(){
-        return $this->is_kelola_inventori == 1 ? $this->variasi()->sum('stok') : '';
+        return $this->is_inventarisasi == 1 ? $this->variasi()->sum('stok') : '';
     }
 
     public function totalStokRendah(){
-        return $this->is_kelola_inventori == 1 ? $this->variasi()->where('stok_rendah','>=','stok')->count() : '';
+        return $this->is_inventarisasi == 1 ? $this->variasi()->where('stok_rendah','>=','stok')->count() : '';
     }
 }

@@ -13,4 +13,8 @@
 		// return  $number;
 	}
 
+	function backofficeDomain(){
+		return "http://localhost:3000";
+	}
+
 ?>

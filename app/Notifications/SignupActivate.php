@@ -42,25 +42,12 @@ class SignupActivate extends Notification
     {
         $url = url('verifikasi-email/'.$notifiable->activation_token);
         return (new MailMessage)
-        ->subject('Confirm your account')
-        ->line('Thanks for signup! Please before you begin, you must confirm your account.')
-        ->action('Confirm Account', url($url))
-        ->line('Thank you for using our application!');
+        ->subject('Kapcake.com - Verifikasi Pendaftaran')
+        ->view(
+            'mail.verifikasi',compact('url')
+        );
     }
 
-    // public function toMail($notifiable)
-    // {
-    //     return (new MailMessage)
-    //     ->subject('Notification Subject')
-    //     ->line('...');
-    // }
-
-    /**
-     * Get the array representation of the notification.
-     *
-     * @param  mixed  $notifiable
-     * @return array
-     */
     public function toArray($notifiable)
     {
         return [

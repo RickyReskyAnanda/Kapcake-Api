@@ -30,24 +30,25 @@ class OutletController extends Controller
                 )
                 ->where('id_outlet', $request->outlet_id)
                 ->first();
-
         
+        if(isset($data->pemesanan))
         $noUrutPesanan = $data
                     ->pemesanan
                     ->where('tanggal_simpan', date('Y-m-d'))  /// tanggalnya belum bisa disesuaikan dgn perangkat 
                     ->max('no_pemesanan');
+        
 
         return response()->json([
-            'jenis_pemesanan' => $data->jenisPemesanan,
-            'kategori_menu' => $data->kategoriMenu,
-            'menu' => $data->menu,
-            'kategori_meja' => $data->kategoriMeja,
+            'jenis_pemesanan' => $data->jenisPemesanan ?? [],
+            'kategori_menu' => $data->kategoriMenu ?? [],
+            'menu' => $data->menu ?? [],
+            'kategori_meja' => $data->kategoriMeja ?? [],
             'pelanggan' => $request->user()->bisnis->pelanggan ?? [],
-            'pajak' => $data->pajak,
-            'diskon' => $data->diskon,
-            'biaya_tambahan' => $data->biayaTambahan,
-            'pemesanan' => $data->pemesanan,
-            'penjualan' => $data->penjualan,
+            'pajak' => $data->pajak ?? [],
+            'diskon' => $data->diskon ?? [],
+            'biaya_tambahan' => $data->biayaTambahan ?? [],
+            'pemesanan' => $data->pemesanan ?? [],
+            'penjualan' => $data->penjualan ?? [],
             'no_urut_pesanan' => $noUrutPesanan ?? 1,
         ], 200);
     }

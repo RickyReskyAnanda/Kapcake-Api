@@ -1,4 +1,4 @@
-<?php
+    <?php
 
 namespace App\Http\Resources;
 
@@ -15,8 +15,8 @@ class KategoriBahanDapurShow extends JsonResource
     public function toArray($request)
     {
             return [
-                    'id' => $this->id_kategori_bahan_dapur,
-                    'nama' => $this->nama_kategori_bahan_dapur,
+                'id' => $this->id_kategori_bahan_dapur,
+                'nama' => $this->nama_kategori_bahan_dapur,
             ];
     }
 }

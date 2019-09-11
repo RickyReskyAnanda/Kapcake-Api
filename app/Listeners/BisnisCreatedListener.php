@@ -5,6 +5,7 @@ use DB;
 use App\KategoriMenu;
 use App\KategoriBahanDapur;
 use App\KategoriBarang;
+use App\TipePenjualan;
 use App\Outlet;
 use App\OutletUser;
 use App\Role;
@@ -57,6 +58,14 @@ class BisnisCreatedListener
                 'bisnis_id' => $event->bisnis->id_bisnis,
                 'outlet_id' => $outlet->id_outlet,
                 'nama_kategori_barang' => 'Tidak Dikategorikan' ,
+            ]);
+
+            TipePenjualan::create([
+                'bisnis_id' => $event->bisnis->id_bisnis,
+                'outlet_id' => $outlet->id_outlet,
+                'nama_tipe_penjualan' => 'Dine In' ,
+                'is_aktif' => '1' ,
+                'is_paten' => '1' 
             ]);
 
             OutletUser::create([

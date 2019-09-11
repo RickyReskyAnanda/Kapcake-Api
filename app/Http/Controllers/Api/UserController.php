@@ -98,7 +98,7 @@ class UserController extends Controller
                             )->id_role
         ]);
  
-        // $user->notify(new SignupActivate($user));
+        $user->notify(new SignupActivate($user));
 
         return response()->json('success', 200);
     }

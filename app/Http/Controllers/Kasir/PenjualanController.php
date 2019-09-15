@@ -34,7 +34,6 @@ class PenjualanController extends Controller
 
     public function store(Request $request){
         // $this->authorize('create', Barang::class);
-
         $data = $request->validate($this->validation());
         $dataKode = [];
         DB::beginTransaction();

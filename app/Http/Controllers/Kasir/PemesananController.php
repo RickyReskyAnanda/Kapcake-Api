@@ -22,15 +22,12 @@ class PemesananController extends Controller
     }
 
     public function store(Request $request){
+        return $request->all();
         // $this->authorize('create', Barang::class);
-
         $data = $request->validate($this->validation());
-        // DB::beginTransaction();
-        // try {   
+        DB::beginTransaction();
+        try {   
             foreach ($data['pemesanan'] as $d) {
-                $item = $d['item'];
-                unset($d['item']);
-
                 $pemesanan = $request->user()->bisnis
                                 ->pemesanan()
                                 ->updateOrCreate(
@@ -65,7 +62,7 @@ class PemesananController extends Controller
                                     'total_item' =>  (float)($d['total_item']),
                                     'total' =>  (float)($d['total'])
                                 ]);
-                foreach ($item as $i) {
+                foreach ($d['pesanan'] as $i) {
                     $pemesanan
                         ->item()
                         ->updateOrCreate(
@@ -87,12 +84,12 @@ class PemesananController extends Controller
                         ]);
                 }
             }
-        //     DB::commit();
-        //     return response('success',200);
-        // } catch (\Exception $e) {
-        //     DB::rollback();
-        //     return response('error',500);
-        // }
+            DB::commit();
+            return response('success',200);
+        } catch (\Exception $e) {
+            DB::rollback();
+            return response('error',500);
+        }
     }
 
     private function validation(){

@@ -16,18 +16,22 @@ class OutletController extends Controller
         if(isset($request->paginate) && $request->paginate == 'true')
             return $request->user()->bisnis
                     ->outlet()
-                    // ->where(function($q){
-                    //     if(isset(request()->pencarian))
-                    //         $q->where('nama_kategori_menu', request()->pencarian);
-                    // })
+                    ->with('pajakTerpilih')
+                    ->where(function($q){
+                        if(isset(request()->pencarian)){
+                            $q->where('nama_outlet', 'like', '%'.request()->pencarian.'%');
+                            $q->orWhere('alamat', 'like', '%'.request()->pencarian.'%');
+                            $q->orWhere('kode_pos', 'like', '%'.request()->pencarian.'%');
+                            $q->orWhere('email', 'like', '%'.request()->pencarian.'%');
+                            $q->orWhereHas('pajak', function($q){
+                                $q->where('nama_pajak','like', '%'.request()->pencarian.'%');
+                            });
+                        }
+                    })
                     ->paginate();
         else
             return $request->user()->bisnis
                     ->outlet()
-                    // ->where(function($q){
-                    //     if(isset(request()->pencarian))
-                    //         $q->where('nama_kategori_menu', request()->pencarian);
-                    // })
                     ->get();
     }
 
@@ -98,6 +102,7 @@ class OutletController extends Controller
             'kode_pos' => 'nullable',
             'alamat' => 'nullable',
             'catatan' => 'nullable',
+            'pajak_id' => 'required|numeric',
         ];
     }
 }

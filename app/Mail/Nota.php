@@ -7,11 +7,11 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class SendActivation extends Mailable
+class Nota extends Mailable
 {
     use Queueable, SerializesModels;
 
-   /**
+    /**
      * The order instance.
      *
      * @var Order
@@ -35,6 +35,9 @@ class SendActivation extends Mailable
      */
     public function build()
     {
-        return $this->view('mail.nota');
+        return $this->from('no-reply@kapcake.com')
+                    ->subject('Cahyadi Cafe via Kapcake')
+                    ->view('mail.nota');
+                    // ->text('mails.demo_plain');
     }
 }

@@ -96,6 +96,14 @@ class Bisnis extends Model
         return $this->hasMany(PenyesuaianStok::class, 'bisnis_id');
     }
 
+    public function perangkat(){
+        return $this->hasMany(Perangkat::class, 'bisnis_id');
+    }
+
+    public function printer(){
+        return $this->hasMany(Printer::class, 'bisnis_id');
+    }
+
     public function transfer(){
         return $this->hasMany(Transfer::class, 'bisnis_id');
     }

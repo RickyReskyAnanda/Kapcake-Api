@@ -12,6 +12,9 @@ use Illuminate\Http\Request;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+Route::post('version', function(){
+	return response(['version' => '1.0.0'], 200);
+});
 
 Route::post('login', 'Api\UserController@login');
 Route::post('signup', 'Api\UserController@signup');
@@ -159,6 +162,10 @@ Route::group(['middleware' => 'auth:api'], function(){
 	Route::put('meja/{meja}','Api\MejaController@update');
 	Route::delete('meja/{meja}','Api\MejaController@destroy');
 
+	Route::get('perangkat','Api\PerangkatController@index');
+	Route::get('perangkat/{perangkat}','Api\PerangkatController@show');
+	Route::put('perangkat/{perangkat}','Api\PerangkatController@update');
+
 	Route::get('outlet','Api\OutletController@index');
 	Route::get('outlet/{outlet}','Api\OutletController@show');
 	Route::post('outlet','Api\OutletController@store');
@@ -196,7 +203,15 @@ Route::group(['middleware' => 'auth:api'], function(){
 
 	Route::put('profil/jenis-item-terpilih', 'Api\UserController@updateJenisItemTerpilih');
 });
-
+Route::group([    
+    'namespace' => 'Auth',    
+    // 'middleware' => 'api',    
+    'prefix' => 'password'
+], function () {    
+    Route::post('create', 'ResetPasswordController@create');
+    Route::get('find/{token}', 'ResetPasswordController@find');
+    Route::post('reset', 'ResetPasswordController@reset');
+});
 
 
 Route::post('kasir/login', 'Kasir\UserController@login');
@@ -207,14 +222,34 @@ Route::group([
 ], function(){
 	Route::get('outlet','OutletController@index');
 
-	Route::get('pemesanan','PemesananController@index'); // ini sinkrosisasi data pemesanan 
-	Route::post('pemesanan','PemesananController@store'); // sinkrosisasi upload data penjualan 
+	Route::post('pelanggan','PelangganController@store'); // sinkrosisasi upload data penjualan
+
+	Route::get('pemesanan','PemesananController@index'); // ini sinkrosisasi data pemesanan
+	Route::post('pemesanan','PemesananController@store'); // sinkrosisasi upload data penjualan
 
 	// -----
-	Route::get('penjualan','PenjualanController@index'); // ini sinkrosisasi data penjualan 
-	Route::post('penjualan','PenjualanController@store'); // sinkrosisasi upload data penjualan 
+	Route::get('penjualan','PenjualanController@index'); // ini sinkrosisasi data penjualan
+	Route::post('penjualan','PenjualanController@store'); // sinkrosisasi upload data penjualan
+
+	Route::get('printer','PrinterController@index'); // ini sinkrosisasi data penjualan
+	Route::post('printer','PrinterController@store'); // sinkrosisasi upload data penjualan
+
+	Route::get('menu','MenuController@index'); // ini sinkrosisasi data menu
+
+	Route::get('meja','MejaController@index'); // ini sinkrosisasi data meja
+
+	Route::get('diskon','DiskonController@index'); // ini sinkrosisasi data diskon
+	Route::get('biaya-tambahan','BiayaTambahanController@index'); // ini sinkrosisasi data diskon
+	Route::get('jenis-pemesanan','TipePenjualanController@index'); // ini sinkrosisasi data diskon
 
 	// Route::post('pelanggan/{outlet}','PelangganController@store');
+	Route::post('update-profil','UserController@updateProfil'); // ini sinkrosisasi data menu
+	Route::post('update-password','UserController@updatePassword'); // ini sinkrosisasi data menu
+
+	Route::post('perangkat/logout','PerangkatController@logout'); // ini sinkrosisasi data menu
+
+	Route::post('email-nota','EmailNotaController@index'); // ini sinkrosisasi data menu
+
 });
 
 Route::middleware('auth:api')->get('/user', function (Request $request) {

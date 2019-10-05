@@ -21,9 +21,11 @@ class MejaController extends Controller
             $data =  $request->user()->bisnis
                     ->meja()
                     ->where(function($q) use ($request){
-                        if($request->has('outlet_id') && $request->outlet_id != 0)
-                            $q->where('outlet_id', $request->outlet_id);
+                        $q->where('outlet_id', $request->outlet_id);
 
+                        if($request->has('kategori_meja_id') && $request->kategori_meja_id != 0)
+                            $q->where('kategori_meja_id', $request->kategori_meja_id);
+                        
                         if(isset(request()->pencarian))
                             $q->where('nama_meja', 'like', '%'.$request->pencarian.'%');
                     })

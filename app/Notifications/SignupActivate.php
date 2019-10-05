@@ -40,9 +40,9 @@ class SignupActivate extends Notification
      */
     public function toMail($notifiable)
     {
-        $url = url('verifikasi-email/'.$notifiable->activation_token);
+        $url = backofficeDomain().'/verifikasi/'.$notifiable->activation_token;
         return (new MailMessage)
-        ->subject('Kapcake.com - Verifikasi Pendaftaran')
+        ->subject('Verifikasi Pendaftaran Kapcake')
         ->view(
             'mail.verifikasi',compact('url')
         );

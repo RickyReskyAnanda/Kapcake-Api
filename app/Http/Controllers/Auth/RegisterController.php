@@ -80,8 +80,8 @@ class RegisterController extends Controller
                 'api_token' => str_random(80).uniqid(),
                 'activation_token' => null
             ]);
-            return redirect(backofficeDomain());
+            return response(['message' => 'token terverifikasi.'], 200);
         }
-        return redirect(backofficeDomain().'/invalid-token');
+        return response(['message' => 'token tidak valid.'], 404);
     }
 }

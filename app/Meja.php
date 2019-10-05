@@ -21,7 +21,7 @@ class Meja extends Model
     }
 
     public function kategoriMeja(){
-        return $this->belongsTo(KategoriMeja::class, 'kategori_meja_id');
+        return $this->belongsTo(KategoriMeja::class, 'kategori_meja_id')->where('bisnis_id',$this->bisnis_id);
     }
 
 }

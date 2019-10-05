@@ -20,6 +20,7 @@ class UserLogin extends JsonResource
             'email' => $this->email,
             'telpon' => $this->telpon,
             'alamat' => $this->alamat,
+            'no_urut' => $this->no_urut,
             'is_super_admin' => $this->is_super_admin,
             'pin' => $this->pin,
             'outlet' => UserOutlet::collection($this->outlet),

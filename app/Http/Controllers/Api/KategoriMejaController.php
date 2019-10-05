@@ -95,6 +95,7 @@ class KategoriMejaController extends Controller
 
     public function validation(){
         return [
+            'outlet_id' => 'required|numeric',
             'nama_kategori_meja' => 'required|max:255',
             'is_aktif' => 'required|numeric',
         ];

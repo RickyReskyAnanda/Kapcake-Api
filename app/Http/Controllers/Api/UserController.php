@@ -74,6 +74,10 @@ class UserController extends Controller
             'email' => $request->email,
             'telpon' => '+62'.$request->telpon,
             'password' => bcrypt($request->password),
+            'no_urut' => 1,
+            'pin' => '1111',
+            'status' => 'aktif',
+            'is_super_admin' => '1',
             'activation_token' => str_random(60)
         ]);
 

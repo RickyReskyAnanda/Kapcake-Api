@@ -24,8 +24,8 @@ class KategoriMeja extends Model
 
         static::creating(function ($model) {
             $user = auth()->user();
-            $model->bisnis_id = $user->bisnis_id;
-            $model->outlet_id = $user->outlet_terpilih_id;
+            if($user->bisnis_id != null)
+                $model->bisnis_id = $user->bisnis_id;
         });
 
     }

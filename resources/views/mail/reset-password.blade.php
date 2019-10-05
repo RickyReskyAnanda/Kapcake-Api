@@ -2,7 +2,7 @@
 <html lang="en" >
 <head>
   <meta charset="UTF-8">
-  <title>Verifikasi E-Mail Anda</title>
+  <title>Permintaan Pemulihan Password Akun Kapcake POS Anda</title>
 </head>
 <body>
   <html>
@@ -55,19 +55,13 @@
                   <td class="content" colspan="2" valign="top" align="center" style="padding-left:90px; padding-right:90px;">
                     <table width="100%" cellpadding="0" cellspacing="0" border="0" bgcolor="#ffffff">
                       <tbody>
-                        <tr>
-                          <td align="center" valign="bottom" colspan="2" cellpadding="3">
-                            <img alt="Kapcake" width="80" src="{{ asset('gambar/email.png') }}"
-                            />
-                          </td>
-                        </tr>
+                       
                         <tr>
                           <td height="30" &nbsp;=""></td>
                         </tr>
                         <tr>
                           <td align="center"> <span style="color:#48545d;font-size:22px;line-height: 24px;">
-                            Silahkan verifikasi Email Anda
-
+                            Reset Password
                           </span>
 
                         </td>
@@ -79,11 +73,11 @@
                         <td height="1" bgcolor="#DAE1E9"></td>
                       </tr>
                       <tr>
-                        <td height="24" &nbsp;=""></td>
+                        <td height="24" align="center"><p>Kami menerima permintaan untuk reset password akun Kapcake POS Anda.</p><br/></td>
                       </tr>
                       <tr>
-                        <td align="center"> <span style="color:#48545d;font-size:14px;line-height:24px;">
-                          Terima kasih telah mendaftar! Silahkan verifikasi email yang Anda daftarkan dengan menekan tombol dibawah ini.
+                        <td align="center"> <span style="color:#48545d;font-size:14px;line-height:24px;"><p>
+                          Untuk reset password Anda, silakan cara klik tombol Reset Password atau klik tautan di bawah ini, atau Anda bisa salin URL ke browser Anda:</p>
                         </span>
 
                       </td>
@@ -92,30 +86,35 @@
                       <td height="20" &nbsp;=""></td>
                     </tr>
                     <tr>
-                      <td valign="top" width="48%" align="center"> <span>
-                        <a href="{{$url}}" style="display:block; padding:15px 25px; background-color:#0087D1; color:#ffffff; border-radius:3px; text-decoration:none;">Verify Email Address</a>
-                      </span>
-
-                    </td>
-                  </tr>
-                  <tr>
-                    <td height="20" &nbsp;=""></td>
-                  </tr>
-                  <tr>
-                    <td align="center">
-                      <img src="https://s3.amazonaws.com/app-public/Coinbase-notification/hr.png" width="54"
-                      height="2" border="0">
-                    </td>
-                  </tr>
-                  <tr>
-                    <td height="20" &nbsp;=""></td>
-                  </tr>
-                  <tr>
-                    <td align="center">
-                      <p style="color:#a2a2a2; font-size:12px; line-height:17px; font-style:italic;">Jika Anda tidak mendaftar di akun ini Anda dapat mengabaikan Email ini dan akun ini akan dihapus.
-                      </p>
-                    </td>
-                  </tr>
+                      <td valign="top" width="48%" align="center"> 
+                        <span>
+                          <a href="{{$url}}" style="display:block; padding:15px 25px; background-color:#0087D1; color:#ffffff; border-radius:3px; text-decoration:none;">Reset Password</a>
+                        </span>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td height="20" &nbsp;=""></td>
+                    </tr>
+                    <tr>
+                      <td align="center">
+                        <img src="https://s3.amazonaws.com/app-public/Coinbase-notification/hr.png" width="54"
+                        height="2" border="0">
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="center">
+                        <p style="color:#a2a2a2; font-size:12px; line-height:17px; font-style:italic;">
+                          Link tautan:  <a href="{{$url}}">{{$url}}</a>
+                        </p>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="center">
+                        <p style="color:#a2a2a2; font-size:12px; line-height:17px; font-style:italic;">
+                          Jika Anda mengalami kendala, silahkan hubungi kami di <a href="tel:+62 8525 6522 335">+62 8525 6522 335</a> atau email ke <a href="mailto:support@kapcake.com">support@kapcake.com</a>
+                        </p>
+                      </td>
+                    </tr>
                   <tr>
                     <td class="email_footer" style="padding: 0 30px 40px; border-top: 1px solid #E1E1E4; line-height: 24px; font-size: 15px; color: #717274; text-align: center; width: 100%;">
                       <table border="0" cellpadding="0" cellspacing="0" width="100%" align="center" style="margin-top: 20px; background-color: white;">
@@ -160,36 +159,36 @@
             <td colspan="2" height="20"></td>
           </tr>
           <tr>
-          <td valign="top"  width="50%" align="center">
-            <a href="https://play.google.com/store/apps/details?id=com.coinbase.android&referrer=utm_source%3Dko_c5255a2d591c8dffc%26utm_medium%3D1%26utm_campaign%3Dkocoinbase----production553ec3be25c1308daf2a5d2791%26utm_term%3D%26utm_content%3D%26"
-            style="display:inline-block;margin-left:5px;">
-            <img src="https://s3.amazonaws.com/app-public/Coinbase-email/Android_app.png"
-            height="40" border="0" alt="Coinbase Android mobile bitcoin wallet">
-          </a>
+            <td valign="top"  width="50%" align="center">
+              <a href="https://play.google.com/store/apps/details?id=com.coinbase.android&referrer=utm_source%3Dko_c5255a2d591c8dffc%26utm_medium%3D1%26utm_campaign%3Dkocoinbase----production553ec3be25c1308daf2a5d2791%26utm_term%3D%26utm_content%3D%26"
+              style="display:inline-block;margin-left:5px;">
+              <img src="https://s3.amazonaws.com/app-public/Coinbase-email/Android_app.png"
+              height="40" border="0" alt="Coinbase Android mobile bitcoin wallet">
+            </a>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2" height="20"></td>
+        </tr>
+      </tbody>
+    </table>
+    <!-- PROMO column end here -->
+    <!-- FOOTER start here -->
+    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tbody>
+        <tr>
+          <td valign="top" align="center"> <span style="font-family: -apple-system,BlinkMacSystemFont,&#39;Segoe UI&#39;,&#39;Roboto&#39;,&#39;Oxygen&#39;,&#39;Ubuntu&#39;,&#39;Cantarell&#39;,&#39;Fira Sans&#39;,&#39;Droid Sans&#39;,&#39;Helvetica Neue&#39;,sans-serif; color:#9EB0C9; font-size:10px;">&copy;
+            <a href="https://www.kapcake.com/" target="_blank" style="color:#9EB0C9 !important; text-decoration:none;">Kapcake</a> 2019
+          </span>
+
         </td>
       </tr>
       <tr>
-        <td colspan="2" height="20"></td>
+        <td height="50">&nbsp;</td>
       </tr>
     </tbody>
   </table>
-  <!-- PROMO column end here -->
-  <!-- FOOTER start here -->
-  <table width="100%" cellpadding="0" cellspacing="0" border="0">
-    <tbody>
-      <tr>
-        <td valign="top" align="center"> <span style="font-family: -apple-system,BlinkMacSystemFont,&#39;Segoe UI&#39;,&#39;Roboto&#39;,&#39;Oxygen&#39;,&#39;Ubuntu&#39;,&#39;Cantarell&#39;,&#39;Fira Sans&#39;,&#39;Droid Sans&#39;,&#39;Helvetica Neue&#39;,sans-serif; color:#9EB0C9; font-size:10px;">&copy;
-          <a href="https://www.kapcake.com/" target="_blank" style="color:#9EB0C9 !important; text-decoration:none;">Kapcake</a> 2019
-        </span>
-
-      </td>
-    </tr>
-    <tr>
-      <td height="50">&nbsp;</td>
-    </tr>
-  </tbody>
-</table>
-<!-- FOOTER end here -->
+  <!-- FOOTER end here -->
 </td>
 </tr>
 </tbody>

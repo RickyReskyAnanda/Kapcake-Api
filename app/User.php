@@ -56,6 +56,10 @@ class User extends Authenticatable
         return $this->belongsTo(Role::class, 'role_id');
     }
 
+    public function perangkat(){
+       return $this->hasOne(Perangkat::class, 'email'); 
+    }
+
     public function roleBackoffice(){
         return ($this->role
                     ->aplikasi()

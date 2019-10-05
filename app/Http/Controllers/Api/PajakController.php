@@ -32,8 +32,8 @@ class PajakController extends Controller
         else
             $data = $request->user()->bisnis
                     ->pajak()
-                    ->where('nama_kategori_menu', $request->has('outlet_id') ? $request->outlet_id : '0' )
-                    ->orderBy('nama_kategori_menu','asc')
+                    ->where('outlet_id', $request->has('outlet_id') ? $request->outlet_id : '0' )
+                    ->orderBy('nama_pajak','asc')
                     ->get();
 
         return PajakResource::collection($data);

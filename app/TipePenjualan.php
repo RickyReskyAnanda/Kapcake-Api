@@ -24,7 +24,8 @@ class TipePenjualan extends Model
 
         static::creating(function ($model) {
             $user = auth()->user();
-            $model->bisnis_id = $user->bisnis_id;
+            if($model->bisnis_id == null)
+                $model->bisnis_id = $user->bisnis_id;
         });
 
         static::deleting(function ($model) {

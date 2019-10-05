@@ -22,30 +22,38 @@ class Outlet extends Model
     }
 
     public function kategoriMenu(){
-        return $this->hasMany(KategoriMenu::class,'outlet_id');
+        return $this->hasMany(KategoriMenu::class,'outlet_id')->where('bisnis_id', auth()->user()->bisnis_id);
     }
     public function menu(){
-        return $this->hasMany(Menu::class,'outlet_id');
+        return $this->hasMany(Menu::class,'outlet_id')->where('bisnis_id', auth()->user()->bisnis_id);
+    }
+
+    public function meja(){
+        return $this->hasMany(Meja::class,'outlet_id')->where('bisnis_id', auth()->user()->bisnis_id);
     }
 
     public function kategoriMeja(){
-        return $this->hasMany(KategoriMeja::class,'outlet_id');
+        return $this->hasMany(KategoriMeja::class,'outlet_id')->where('bisnis_id', auth()->user()->bisnis_id);
     }
 
     public function pajak(){
-        return $this->belongsTo(Pajak::class,'pajak_id');
+        return $this->hasOne(Pajak::class,'outlet_id')->where('bisnis_id', auth()->user()->bisnis_id);
+    }
+
+    public function pajakTerpilih(){
+        return $this->belongsTo(Pajak::class,'pajak_id')->where('bisnis_id', auth()->user()->bisnis_id);
     }
 
     public function diskon(){
-        return $this->hasMany(Diskon::class,'outlet_id');
+        return $this->hasMany(Diskon::class,'outlet_id')->where('bisnis_id', auth()->user()->bisnis_id);
     }
 
     public function biayaTambahan(){
-        return $this->hasMany(BiayaTambahan::class,'outlet_id');
+        return $this->hasMany(BiayaTambahan::class,'outlet_id')->where('bisnis_id', auth()->user()->bisnis_id);
     }
 
     public function jenisPemesanan(){
-        return $this->hasMany(TipePenjualan::class,'outlet_id');
+        return $this->hasMany(TipePenjualan::class,'outlet_id')->where('bisnis_id', auth()->user()->bisnis_id);
     }
 
 

@@ -22,11 +22,11 @@ class PemesananController extends Controller
     }
 
     public function store(Request $request){
-        return $request->all();
         // $this->authorize('create', Barang::class);
         $data = $request->validate($this->validation());
         DB::beginTransaction();
-        try {   
+        try { 
+            if(isset($data['pemesanan']))
             foreach ($data['pemesanan'] as $d) {
                 $pemesanan = $request->user()->bisnis
                                 ->pemesanan()
@@ -34,7 +34,7 @@ class PemesananController extends Controller
                                     ['kode_pemesanan' =>  $d['kode_pemesanan']],
                                     [
                                     'outlet_id' => $data['outlet_id'],
-                                    'no_pemesanan' =>  (float)($d['no_pemesanan']),
+                                    'no_pemesanan' =>  $d['no_pemesanan'],
                                     'kode_pemesanan' =>  $d['kode_pemesanan'],
                                     'tanggal_simpan' =>  $d['tanggal_simpan'],
                                     'waktu_simpan' =>  $d['waktu_simpan'],
@@ -81,11 +81,17 @@ class PemesananController extends Controller
                             'jumlah' => (float)$i['jumlah'],
                             'harga' => (float)$i['harga'],
                             'total' => (float)$i['total'],
+                            'catatan' =>  $i['catatan']
                         ]);
                 }
             }
             DB::commit();
-            return response('success',200);
+             $pemesanan = $request->user()->bisnis
+                                ->pemesanan()
+                                ->with('item')
+                                ->where('outlet_id', $data['outlet_id'])
+                                ->get();
+            return response($pemesanan,200);
         } catch (\Exception $e) {
             DB::rollback();
             return response('error',500);
@@ -95,7 +101,7 @@ class PemesananController extends Controller
     private function validation(){
         return [
             'outlet_id' => 'required|integer',
-            'pemesanan' => 'required',
+            'pemesanan' => 'nullable',
         ];
     }
 }
